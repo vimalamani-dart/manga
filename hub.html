@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vimalamani | Manga Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+.tick-circle {
+  display: inline-block;
+  transform-origin: center;
+  animation: floatSpin 2s infinite ease-in-out;
+  cursor: pointer;
+}
+
+/* Circle background starts red */
+.circle-bg {
+  fill: #ffd700; /* red initially */
+  stroke: #ffc700;
+  stroke-width: 1;
+  transition: fill 0.5s ease; /* smooth red → gold transition */
+}
+
+/* White check mark with shine */
+.tick-path {
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px #fff);
+  transition: filter 0.5s ease;
+}
+
+/* On hover or active, circle turns gold */
+.tick-circle:hover .circle-bg,
+.tick-circle.active .circle-bg {
+  fill: #cc0000; /* gold */
+  stroke: #990000;
+}
+
+/* Optional: make tick glow more on gold */
+.tick-circle:hover .tick-path,
+.tick-circle.active .tick-path {
+  filter: drop-shadow(0 0 6px #fff);
+}
+</style>
+    <style>
+        :root {
+            --dlas-bg: #1c1c1c;
+            --dlas-black: #000000;
+            --dlas-red: #cc0000;
+            --dlas-text: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dlas-bg);
+            color: var(--dlas-text);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .heading-font {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--dlas-bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 0px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--dlas-red); }
+
+        .nav-link {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #ffffff;
+            transition: color 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            text-transform: capitalize;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--dlas-red); }
+
+        .tab-pane { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .about-image-wrapper { position: relative; background-color: #000; filter: url(#rough-edge-mask); overflow: hidden; cursor: pointer; }
+        .about-image-overlay { position: absolute; inset: 0; background-color: #ff0055; mix-blend-mode: multiply; z-index: 10; pointer-events: none; transition: opacity 0.4s ease; }
+        .about-image-wrapper img { transition: transform 0.6s ease, filter 0.6s ease; filter: grayscale(100%) contrast(1.2); }
+        .about-image-wrapper:hover img { transform: scale(1.1); filter: grayscale(0%) contrast(1.1); }
+        .about-image-wrapper:hover .about-image-overlay { opacity: 0.5; }
+
+        .ink-splatter { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; margin: 0 auto; cursor: pointer; }
+        .ink-splatter::before { content: ''; position: absolute; inset: 0; background-color: #000000; border-radius: 50%; filter: url(#ink-edge); transform: scale(1.05); z-index: 0; transition: transform 0.4s ease; }
+        .ink-splatter img { position: relative; z-index: 1; width: 85%; height: 85%; object-fit: contain; filter: grayscale(100%) brightness(1.2) contrast(1.2); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .ink-splatter:hover::before { transform: scale(1.15); }
+        .ink-splatter:hover img { transform: scale(1.15) translateY(-5px); filter: grayscale(0%) brightness(1) contrast(1.1); }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+
+        /* Toast Animation Classes */
+        .toast-hidden { opacity: 0; transform: translate(-50%, -20px); pointer-events: none; }
+        .toast-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-5 left-1/2 transform toast-hidden bg-[var(--dlas-red)] text-white px-8 py-4 rounded shadow-2xl z-[9999] transition-all duration-300 heading-font tracking-widest text-lg border-2 border-white/20">
+        Notification
+    </div>
+
+    <header class="bg-[#151515] border-b border-black/50 shadow-md relative z-50">
+        <div class="max-w-7xl mx-auto px-6 pt-6 pb-2 flex items-center justify-between">
+            <div class="flex space-x-4 text-[var(--dlas-red)] w-1/3">
+                <a href="#" target="_blank" class="hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="#" target="_blank" class="hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                </a>
+                <a href="#" target="_blank" class="hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                </a>
+            </div>
+
+            <div class="flex flex-col items-center justify-center w-1/3">
+                <div class="w-20 h-20 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform" onclick="openTab('home')">
+                    <svg viewBox="0 0 100 100" class="w-full h-full text-white fill-none stroke-current stroke-[3px]">
+                        <path d="M20,80 Q50,10 80,80" />
+                        <path d="M30,60 L40,40 L50,55 L60,40 L70,60" />
+                        <rect x="25" y="75" width="50" height="15" rx="5" />
+                        <line x1="35" y1="75" x2="35" y2="90" />
+                        <line x1="50" y1="75" x2="50" y2="90" />
+                        <line x1="65" y1="75" x2="65" y2="90" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="w-1/3 flex justify-end items-center gap-4">
+                <button id="nav-profile-btn" onclick="openTab('profile')" class="hidden flex items-center gap-3 text-white hover:text-[var(--dlas-red)] transition-colors group">
+                    <span id="header-username" class="text-xs font-bold uppercase tracking-widest hidden md:block group-hover:text-[var(--dlas-red)]"></span>
+                    <img id="header-avatar" src="https://placehold.co/100x100/1a1a1a/ffffff?text=U" class="w-10 h-10 rounded-full border-2 border-gray-700 group-hover:border-[var(--dlas-red)] object-cover transition-colors">
+                </button>
+                <button id="nav-auth-btn" onclick="toggleAuth()" class="text-[var(--dlas-red)] text-xs font-bold uppercase tracking-widest border border-[var(--dlas-red)] px-4 py-2 hover:bg-[var(--dlas-red)] hover:text-white transition-colors">
+                    Log In / Sign Up
+                </button>
+            </div>
+        </div>
+
+        <nav class="max-w-5xl mx-auto flex flex-wrap justify-center gap-x-8 gap-y-4 pb-6 pt-2">
+            <button class="nav-link active" onclick="openTab('home')">Start</button>
+            <button class="nav-link" onclick="openTab('characters')">Characters</button>
+            <button class="nav-link" onclick="openTab('about')">About me <span class="text-[10px] ml-1">▼</span></button>
+            <button class="nav-link" onclick="openTab('manga')">My Manga ("VIMALAMANI") <span class="text-[10px] ml-1">▼</span></button>
+            <!-- NEW FEATURES NAVIGATION -->
+            <button class="nav-link text-blue-400" onclick="openTab('community')">Community Manga <span class="text-[10px] ml-1">▼</span></button>
+            <button class="nav-link text-purple-400 hidden" id="nav-studio" onclick="openTab('studio')">Creator Studio</button>
+        </nav>
+    </header>
+
+    <main class="min-h-[80vh]">
+
+        <!-- HOME -->
+        <section id="home" class="tab-pane active py-32 px-6">
+            <div class="max-w-5xl mx-auto text-center">
+                <h1 class="text-6xl md:text-8xl heading-font text-white mb-6">SHIVA'S JOURNEY</h1>
+                <p class="text-[15px] text-[#cccccc] font-medium max-w-2xl mx-auto leading-relaxed">
+                    Welcome to the official hub for the Vimalamani manga. Explore the lore, meet the characters, and follow the progress of the upcoming chapters. Or visit the Community to see fan-created projects.
+                </p>
+                <div class="mt-12 flex justify-center gap-6">
+                    <button onclick="attemptRead('vimalamani', 'ch1')" class="border-2 border-[var(--dlas-red)] text-[var(--dlas-red)] hover:bg-[var(--dlas-red)] hover:text-white px-8 py-3 heading-font text-xl transition-all cursor-pointer">START READING</button>
+                    <button onclick="openTab('community')" class="border-2 border-gray-500 text-gray-400 hover:border-white hover:text-white px-8 py-3 heading-font text-xl transition-all cursor-pointer">COMMUNITY HUB</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section id="about" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                <div class="pr-0 md:pr-12">
+                    <h2 class="text-[var(--dlas-red)] text-[2.8rem] md:text-[3.5rem] heading-font leading-[1.1] mb-8 lowercase normal-case tracking-normal" style="text-transform: none;">
+                        ‘How long have you<br>been drawing for?’
+                    </h2>
+                    <div class="space-y-6 text-[#cccccc] text-[15px] leading-[1.8] font-medium max-w-[95%]">
+                        <p>Honestly; I have no idea. Always have, somehow. I already enjoyed it in kindergarten. And I still do. At work, everyone used to have the inside track that I was already retired in spirit, as I've now published over 10 books. It can be a bit difficult to keep track of everything, which is why I have recorded my career with all its ups and downs on this page.</p>
+                        <p class="pt-2 text-white">Enjoy reading!</p>
+                    </div>
+                </div>
+                <div class="flex justify-center md:justify-end">
+                    <div class="w-full max-w-[420px] aspect-square bg-[#0a0a0a] about-image-wrapper p-2">
+                        <img src="https://placehold.co/800x800/222222/555555?text=YOUR+PORTRAIT" alt="About the Artist" class="w-full h-full object-cover">
+                        <div class="about-image-overlay"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARACTERS -->
+        <section id="characters" class="tab-pane py-24 px-6 md:px-12">
+            <!-- (Existing Content preserved) -->
+            <div class="max-w-[1400px] mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="ink-splatter mb-8"><img src="https://placehold.co/400x400/transparent/ffffff?text=SHIVA+ART" alt="Shiva"></div>
+                        <h3 class="text-3xl text-white font-extrabold mb-6 capitalize" style="text-transform: none;">Shiva</h3>
+                        <p class="text-[#e0e0e0] text-[14px] leading-[1.8] px-4 font-medium">Shiva's rough nature makes it difficult for other people to get close to him...</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="ink-splatter mb-8"><img src="https://placehold.co/400x400/transparent/ffffff?text=COUSIN+ART" alt="The Cousin"></div>
+                        <h3 class="text-3xl text-white font-extrabold mb-6 capitalize" style="text-transform: none;">The Cousin</h3>
+                        <p class="text-[#e0e0e0] text-[14px] leading-[1.8] px-4 font-medium">The Cousin is an introverted and enigmatic counterpart to Shiva...</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="ink-splatter mb-8"><img src="https://placehold.co/400x400/transparent/ffffff?text=TIGER+ART" alt="The Tiger"></div>
+                        <h3 class="text-3xl text-white font-extrabold mb-6 capitalize" style="text-transform: none;">The Tiger</h3>
+                        <p class="text-[#e0e0e0] text-[14px] leading-[1.8] px-4 font-medium">A massive, battle-scarred Tiger that rules the valley...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MANGA ARCHIVE (Original) -->
+        <section id="manga" class="tab-pane py-32 px-6 text-center">
+            <h2 class="text-5xl heading-font text-[var(--dlas-red)] mb-8">VIMALAMANI: THE ARCHIVE</h2>
+            <p class="text-gray-400 mb-12">Select a chapter below. You must be signed in to read.</p>
+            
+            <div class="flex flex-col items-center gap-6 max-w-2xl mx-auto">
+                <button onclick="attemptRead('vimalamani', 'ch1')" class="w-full bg-[#111] border border-gray-800 p-6 flex flex-col sm:flex-row justify-between items-center hover:border-[var(--dlas-red)] hover:bg-[#1a1a1a] transition-colors cursor-pointer text-left group gap-4">
+                    <span class="text-xl text-white font-bold group-hover:text-[var(--dlas-red)] transition-colors">Chapter 1: The Tiger</span>
+                    <div class="flex items-center gap-6">
+                        <span class="text-xs text-gray-500 font-bold tracking-widest uppercase flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <span id="global-read-count">0</span> Reads
+                        </span>
+                        <span class="text-sm text-[var(--dlas-red)] uppercase font-bold tracking-widest bg-[var(--dlas-red)]/10 px-4 py-2 rounded">Read Now</span>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- --- NEW FEATURE: COMMUNITY TAB --- -->
+        <section id="community" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-5xl heading-font text-blue-500 mb-8 border-b border-gray-800 pb-4">COMMUNITY MANGA</h2>
+                <div id="community-manga-list" class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+                    <p class="text-gray-500 italic col-span-4">No community manga uploaded yet.</p>
+                </div>
+
+                <h2 class="text-5xl heading-font text-purple-500 mb-8 border-b border-gray-800 pb-4">GROUP PROJECTS</h2>
+                <div id="group-manga-list" class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <p class="text-gray-500 italic col-span-4">No group projects uploaded yet.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- --- NEW FEATURE: COMMUNITY MANGA DETAIL --- -->
+        <section id="manga-detail" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-4xl mx-auto bg-[#111] border border-gray-800 p-8" id="manga-detail-container">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- --- NEW FEATURE: CREATOR STUDIO --- -->
+        <section id="studio" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-5xl heading-font text-purple-400 mb-8 border-b border-gray-800 pb-4">CREATOR STUDIO</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <!-- Upload Form -->
+                    <div class="bg-[#111] p-6 border border-gray-800">
+                        <h3 class="text-2xl heading-font text-white mb-6">Create New Manga</h3>
+                        <div class="space-y-4">
+                            <input type="text" id="studio-title" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none" placeholder="Manga Title">
+                            <textarea id="studio-desc" rows="3" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none resize-none" placeholder="Description / Synopsis"></textarea>
+                            <input type="text" id="studio-tags" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none" placeholder="Tags (comma separated)">
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Assign to Group (Optional)</label>
+                                <select id="studio-group-select" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none">
+                                    <option value="">Personal Project (No Group)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cover Image</label>
+                                <input type="file" id="studio-cover" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                            </div>
+
+                            <button onclick="createNewManga()" class="w-full bg-purple-600 text-white py-3 heading-font text-xl hover:bg-white hover:text-black transition-colors mt-4">
+                                SUBMIT FOR APPROVAL
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Groups Management -->
+                    <div class="bg-[#111] p-6 border border-gray-800">
+                        <h3 class="text-2xl heading-font text-white mb-6">Group Management</h3>
+                        
+                        <div class="mb-6 border-b border-gray-800 pb-6">
+                            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Create a Group</h4>
+                            <div class="flex gap-2">
+                                <input type="text" id="studio-group-name" class="flex-1 bg-[#1a1a1a] border border-gray-700 p-2 text-white focus:border-purple-500 outline-none" placeholder="Group Name">
+                                <button onclick="createGroup()" class="bg-gray-800 hover:bg-purple-600 text-white px-4 font-bold uppercase text-xs transition-colors">Create</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">My Groups</h4>
+                            <div id="studio-my-groups" class="space-y-3 max-h-40 overflow-y-auto pr-2">
+                                <p class="text-gray-600 text-xs italic">You are not in any groups.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Projects List -->
+                <div class="bg-[#111] p-6 border border-gray-800">
+                    <h3 class="text-2xl heading-font text-white mb-6">My Uploaded Projects</h3>
+                    <div id="studio-my-projects" class="space-y-4">
+                        <p class="text-gray-500 italic">No projects yet.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- READER (Now Dynamic) -->
+        <section id="reader" class="tab-pane py-12 px-6 bg-[#0a0a0a] min-h-screen">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-6 mb-12">
+                    <button id="reader-back-btn" class="text-gray-400 hover:text-[var(--dlas-red)] flex items-center gap-2 font-bold uppercase text-sm tracking-widest transition-colors">
+                        <span>← Back</span>
+                    </button>
+                    <h2 class="heading-font text-2xl text-white m-0" id="reader-title">CH 1: THE TIGER</h2>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 w-full" id="reader-pages">
+                    <!-- Pages dynamically injected here -->
+                </div>
+
+                <div class="text-center mt-20 pt-12 border-t border-gray-800">
+                    <p class="heading-font text-[var(--dlas-red)] text-3xl mb-2" id="reader-end-text">END OF CHAPTER</p>
+                    <p class="text-gray-500 text-sm font-bold uppercase tracking-widest mb-12">Thank you for reading</p>
+                    
+                    <div class="max-w-2xl mx-auto bg-[#111] border border-gray-800 p-8 text-left">
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-6 mb-6">
+                            <div class="flex gap-6">
+                                <button id="btn-like" onclick="toggleLike()" class="flex items-center gap-2 text-gray-400 hover:text-[var(--dlas-red)] transition-colors font-bold group">
+                                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                                    <span id="like-count">0</span>
+                                </button>
+                                <button id="btn-dislike" onclick="toggleDislike()" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-bold group">
+                                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path></svg>
+                                    <span id="dislike-count">0</span>
+                                </button>
+                            </div>
+                            <div class="text-[var(--dlas-red)] text-sm font-bold uppercase tracking-widest">
+                                <span id="comment-total">0</span> Comments
+                            </div>
+                        </div>
+
+                        <div class="mb-8 flex flex-col gap-3">
+                            <textarea id="comment-input" rows="3" class="w-full bg-[#1a1a1a] border border-gray-700 p-4 text-white focus:border-[var(--dlas-red)] outline-none transition-colors placeholder-gray-600 resize-none" placeholder="What did you think of this chapter?"></textarea>
+                            <button onclick="postComment()" class="self-end bg-[var(--dlas-red)] text-white px-6 py-2 heading-font text-xl hover:bg-white hover:text-black transition-colors">POST COMMENT</button>
+                        </div>
+
+                        <div class="space-y-4" id="comment-list">
+                            <!-- Local comments appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- USER PROFILE -->
+        <section id="profile" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+                <!-- Left: Profile Info -->
+                <div class="md:col-span-2 bg-[#111] border border-gray-800 p-8">
+                    <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
+                        <h2 class="text-4xl heading-font text-white">YOUR PROFILE</h2>
+                        <button onclick="logoutUser()" class="text-gray-500 hover:text-[var(--dlas-red)] font-bold text-sm uppercase tracking-widest transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Log Out
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-12">
+                        <div class="flex flex-col items-center gap-6">
+                            <div class="relative group w-40 h-40">
+                                <img id="profile-avatar-preview" src="https://placehold.co/150x150/1a1a1a/ffffff?text=U" class="w-full h-full rounded-full border-4 border-gray-700 object-cover group-hover:border-[var(--dlas-red)] transition-colors">
+                                <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('profile-avatar-upload').click()">
+                                    <span class="text-white text-xs font-bold uppercase tracking-widest">Change</span>
+                                </div>
+                            </div>
+                            <label class="text-xs text-gray-500 font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors border border-gray-700 px-4 py-2 hover:border-white">
+                                Upload New Picture
+                                <input type="file" id="profile-avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                            </label>
+                            <div id="profile-role-badge" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold tracking-widest uppercase">Reader</div>
+                        </div>
+
+                        <div class="flex-1 space-y-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Display Name</label>
+                                <input type="text" id="profile-username" class="w-full bg-[#1a1a1a] border border-gray-700 p-4 text-white focus:border-[var(--dlas-red)] outline-none transition-colors">
+                            </div>
+
+                            <div class="border-t border-gray-800 pt-6 mt-6">
+                                <h4 class="text-white text-sm font-bold uppercase tracking-widest mb-4">Change Password</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Current Password</label>
+                                        <div class="relative">
+                                            <input type="password" id="profile-current-password" class="w-full bg-[#1a1a1a] border border-gray-700 p-4 pr-12 text-white focus:border-[var(--dlas-red)] outline-none transition-colors" placeholder="••••••••">
+                                            <button type="button" onclick="togglePasswordVisibility('profile-current-password', this)" class="absolute right-4 top-4 text-gray-500 hover:text-white">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">New Password (Min 8 Chars)</label>
+                                        <div class="relative">
+                                            <input type="password" id="profile-new-password" class="w-full bg-[#1a1a1a] border border-gray-700 p-4 pr-12 text-white focus:border-[var(--dlas-red)] outline-none transition-colors" placeholder="••••••••" minlength="8">
+                                            <button type="button" onclick="togglePasswordVisibility('profile-new-password', this)" class="absolute right-4 top-4 text-gray-500 hover:text-white">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <button onclick="saveProfile()" class="bg-[var(--dlas-red)] text-white px-8 py-3 heading-font text-2xl hover:bg-white hover:text-black transition-colors w-full md:w-auto">
+                                    SAVE CHANGES
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Notifications & Collabs -->
+                <div class="bg-[#111] border border-gray-800 p-8">
+                    <h2 class="text-2xl heading-font text-white mb-6 border-b border-gray-800 pb-4">NOTIFICATIONS</h2>
+                    <div id="profile-notifications" class="space-y-4 max-h-60 overflow-y-auto pr-2">
+                        <p class="text-gray-500 text-sm italic">No new notifications.</p>
+                    </div>
+
+                    <h2 class="text-2xl heading-font text-white mt-10 mb-6 border-b border-gray-800 pb-4">COLLAB REQUESTS</h2>
+                    <div id="profile-collabs" class="space-y-4 max-h-60 overflow-y-auto pr-2">
+                        <p class="text-gray-500 text-sm italic">No pending requests.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEV DASHBOARD -->
+        <section id="admin" class="tab-pane py-24 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-5xl heading-font text-[var(--dlas-red)] mb-8 border-b border-gray-800 pb-4">DEV DASHBOARD</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-[#111] border border-gray-800 p-6">
+                        <h3 class="text-2xl heading-font text-white mb-6">Registered Members (<span id="dev-total-users">0</span>)</h3>
+                        <div class="max-h-[400px] overflow-y-auto space-y-3 pr-2" id="dev-user-list">
+                            <p class="text-gray-500 italic">No users found.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111] border border-gray-800 p-6">
+                        <h3 class="text-2xl heading-font text-white mb-6">Vimalamani Ch 1 Stats</h3>
+                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)]">
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div class="bg-[#222] p-3 rounded">
+                                    <p class="text-xs text-gray-500 font-bold mb-1 uppercase">Total Reads</p>
+                                    <p class="text-2xl text-white font-bold" id="dev-stat-reads">0</p>
+                                </div>
+                                <div class="bg-[#222] p-3 rounded">
+                                    <p class="text-xs text-gray-500 font-bold mb-1 uppercase">Total Likes</p>
+                                    <p class="text-2xl text-white font-bold" id="dev-stat-likes">0</p>
+                                </div>
+                                <div class="bg-[#222] p-3 rounded">
+                                    <p class="text-xs text-gray-500 font-bold mb-1 uppercase">Total Dislikes</p>
+                                    <p class="text-2xl text-white font-bold" id="dev-stat-dislikes">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- --- NEW FEATURE: ADMIN APPROVAL SYSTEM --- -->
+                <div class="bg-[#111] border border-blue-900 p-6 mb-8">
+                    <h3 class="text-2xl heading-font text-blue-400 mb-6">Pending Manga Approvals</h3>
+                    <div id="dev-pending-mangas" class="space-y-4">
+                        <p class="text-gray-500 italic">No mangas pending approval.</p>
+                    </div>
+                </div>
+
+                <!-- DANGER ZONE: Reset Database -->
+                <div class="mt-12 bg-red-950/20 border border-red-900 p-8 text-center">
+                    <h3 class="text-2xl heading-font text-red-500 mb-2">DANGER ZONE</h3>
+                    <p class="text-red-300 text-sm mb-6 max-w-xl mx-auto font-medium">This action will permanently delete all registered users, comments, likes, mangas, and views from your browser's local storage. This cannot be undone.</p>
+                    <button onclick="resetDatabase()" class="bg-red-700 hover:bg-red-600 text-white font-bold uppercase tracking-widest px-8 py-4 transition-colors">
+                        RESET ALL DATA
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="bg-[#111111] py-12 px-6 border-t border-black text-center mt-12 relative">
+        <p class="text-gray-600 text-[11px] font-bold uppercase tracking-widest">
+            © 2025 Vimalamani. All artwork and story by the author. Community content owned by respective creators.
+        </p>
+        <button onclick="attemptAdminAccess()" class="absolute bottom-4 right-4 text-gray-800 hover:text-[var(--dlas-red)] text-[10px] font-bold uppercase tracking-widest transition-colors">DEV</button>
+    </footer>
+
+    <!-- AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="bg-[#111] border-2 border-[var(--dlas-red)] p-8 max-w-md w-full mx-4 relative shadow-[8px_8px_0_var(--dlas-red)]">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white font-bold text-xl">&times;</button>
+            <h2 class="heading-font text-4xl text-white mb-2" id="auth-title">LOGIN</h2>
+            <p class="text-gray-400 text-sm mb-6 font-medium" id="auth-subtitle">Access your account to read chapters and drop comments.</p>
+            
+            <div id="auth-error" class="hidden bg-red-900/40 border border-[var(--dlas-red)] text-red-200 text-xs p-3 mb-4 font-bold tracking-wide"></div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Username</label>
+                    <input type="text" id="auth-username" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-[var(--dlas-red)] outline-none transition-colors" placeholder="e.g. MangaReader99">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Password (Min 8 Chars)</label>
+                    <div class="relative">
+                        <input type="password" id="auth-password" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 pr-10 text-white focus:border-[var(--dlas-red)] outline-none transition-colors" placeholder="••••••••" minlength="8">
+                        <button type="button" onclick="togglePasswordVisibility('auth-password', this)" class="absolute right-3 top-3 text-gray-500 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- --- NEW FEATURE: ROLE SELECTOR FOR SIGNUP --- -->
+                <div id="auth-role-group" class="hidden pt-2 border-t border-gray-800 mt-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Account Type</label>
+                    <div class="flex gap-6 text-white text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer font-bold"><input type="radio" name="auth-role" value="reader" checked class="accent-[var(--dlas-red)]"> Reader</label>
+                        <label class="flex items-center gap-2 cursor-pointer font-bold"><input type="radio" name="auth-role" value="creator" class="accent-[var(--dlas-red)]"> Creator</label>
+                    </div>
+                </div>
+                
+                <button id="auth-submit-btn" onclick="submitAuth()" class="w-full bg-[var(--dlas-red)] text-white py-3 heading-font text-2xl hover:bg-white hover:text-black transition-colors mt-4">
+                    LOGIN
+                </button>
+            </div>
+
+            <div class="mt-6 text-center">
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-gray-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                    Don't have an account? Sign Up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Filters -->
+    <svg style="visibility: hidden; position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+            <filter id="rough-edge-mask" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="4" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+            <filter id="ink-edge" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" xChannelSelector="R" yChannelSelector="G" />
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- LOCAL STORAGE JAVASCRIPT LOGIC -->
+    <script>
+function toggleFounder(el) {
+  // Toggle Founder badge
+  let next = el.nextElementSibling;
+
+  if (next && next.classList.contains("founder")) {
+    next.style.opacity = next.style.opacity === "0" ? "1" : "0";
+  } else {
+    let tag = document.createElement("span");
+    tag.innerText = "Founder";
+    tag.className = "founder";
+    tag.style.marginLeft = "5px";
+    tag.style.fontSize = "10px";
+    tag.style.opacity = "0";
+    tag.style.transition = "opacity 0.3s ease";
+    tag.style.color = "rgba(245, 241, 230, 0.7)";
+    el.parentNode.insertBefore(tag, el.nextSibling);
+
+    requestAnimationFrame(() => { tag.style.opacity = "1"; });
+  }
+
+  // Toggle gold circle
+  el.classList.toggle("active");
+}
+</script>
+    <script>
+        // State variables
+        let isLoggedIn = false;
+        let currentUserUID = null;
+        let currentUserName = "Guest";
+        let currentUserAvatar = null;
+        let currentUserRole = "reader";
+        let authMode = 'login'; // 'login' or 'signup'
+        window.pendingRead = false;
+        let toastTimeout = null;
+
+        // Current Reader State Context
+        let currentViewMangaId = 'vimalamani';
+        let currentViewChapterId = 'ch1';
+
+        // --- ASMR Audio Context Setup ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playASMRSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        // --- Toast Notification System ---
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('toast-hidden');
+            toast.classList.add('toast-visible');
+            playASMRSound();
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('toast-visible');
+                toast.classList.add('toast-hidden');
+            }, 3000);
+        };
+
+        // --- Password Visibility Toggle ---
+        window.togglePasswordVisibility = function(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btnElement.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>`;
+            } else {
+                input.type = "password";
+                btnElement.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
+            }
+        };
+
+        // --- Database Simulator via LocalStorage ---
+        const loadDB = () => {
+            return {
+                users: JSON.parse(localStorage.getItem('vima_users')) || [],
+                ch1: JSON.parse(localStorage.getItem('vima_ch1_stats')) || { views: 0, likes: [], dislikes: [] },
+                comments: JSON.parse(localStorage.getItem('vima_comments')) || [],
+                // New Features Schema
+                mangas: JSON.parse(localStorage.getItem('vima_mangas')) || [],
+                groups: JSON.parse(localStorage.getItem('vima_groups')) || [],
+                notifications: JSON.parse(localStorage.getItem('vima_notifications')) || [],
+                collabReqs: JSON.parse(localStorage.getItem('vima_collabReqs')) || []
+            };
+        };
+
+        const saveDB = (db) => {
+            localStorage.setItem('vima_users', JSON.stringify(db.users));
+            localStorage.setItem('vima_ch1_stats', JSON.stringify(db.ch1));
+            localStorage.setItem('vima_comments', JSON.stringify(db.comments));
+            localStorage.setItem('vima_mangas', JSON.stringify(db.mangas));
+            localStorage.setItem('vima_groups', JSON.stringify(db.groups));
+            localStorage.setItem('vima_notifications', JSON.stringify(db.notifications));
+            localStorage.setItem('vima_collabReqs', JSON.stringify(db.collabReqs));
+            updateUI(db);
+        };
+
+        // Helper to send a notification
+        const pushNotification = (db, userId, msg) => {
+            db.notifications.push({ id: 'notif_'+Date.now(), userId, message: msg, date: Date.now() });
+        };
+
+        // --- Global Admin Function ---
+        window.attemptAdminAccess = function() {
+            const pwd = prompt("Developer access is restricted.\nPlease enter the developer password:");
+            if (pwd === "admin123") {
+                showToast("Developer mode unlocked");
+                openTab('admin');
+            } else if (pwd !== null) {
+                alert("Incorrect developer password.");
+            }
+        };
+
+        window.resetDatabase = function() {
+            if (confirm("Are you entirely sure you want to delete all users, comments, likes, mangas, and views? This cannot be undone.")) {
+                localStorage.clear();
+                logoutUser(true);
+                openTab('home');
+                showToast("Database successfully reset!");
+            }
+        };
+
+        // --- UI Updater ---
+        const updateUI = (db = loadDB()) => {
+            
+            // Header Authentication UI
+            if (isLoggedIn && currentUserUID) {
+                document.getElementById('nav-auth-btn').classList.add('hidden');
+                document.getElementById('nav-profile-btn').classList.remove('hidden');
+                document.getElementById('header-username').innerText = currentUserName;
+                
+                const defaultAvatar = `https://placehold.co/100x100/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
+                document.getElementById('header-avatar').src = currentUserAvatar || defaultAvatar;
+
+                // Show/hide creator studio nav
+                if (currentUserRole === 'creator') {
+                    document.getElementById('nav-studio').classList.remove('hidden');
+                } else {
+                    document.getElementById('nav-studio').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('nav-auth-btn').classList.remove('hidden');
+                document.getElementById('nav-profile-btn').classList.add('hidden');
+                document.getElementById('nav-studio').classList.add('hidden');
+            }
+
+            // Update Vimalamani Static Stats (Admin Project)
+            document.getElementById('global-read-count').innerText = db.ch1.views.toLocaleString();
+            
+            if (currentViewMangaId === 'vimalamani') {
+                document.getElementById('like-count').innerText = db.ch1.likes.length.toLocaleString();
+                document.getElementById('dislike-count').innerText = db.ch1.dislikes.length.toLocaleString();
+                document.getElementById('btn-like').style.color = db.ch1.likes.includes(currentUserUID) ? "var(--dlas-red)" : "";
+                document.getElementById('btn-dislike').style.color = db.ch1.dislikes.includes(currentUserUID) ? "white" : "";
+            } else {
+                // Update Community Manga Reader stats
+                const m = db.mangas.find(m => m.id === currentViewMangaId);
+                if(m) {
+                    const c = m.chapters.find(ch => ch.id === currentViewChapterId);
+                    if(c) {
+                        document.getElementById('like-count').innerText = c.likes.length.toLocaleString();
+                        document.getElementById('dislike-count').innerText = c.dislikes.length.toLocaleString();
+                        document.getElementById('btn-like').style.color = c.likes.includes(currentUserUID) ? "var(--dlas-red)" : "";
+                        document.getElementById('btn-dislike').style.color = c.dislikes.includes(currentUserUID) ? "white" : "";
+                    }
+                }
+            }
+
+            // Update Comments mapped to the current context
+            const userMap = {};
+            db.users.forEach(u => userMap[u.uid] = u);
+
+            const list = document.getElementById('comment-list');
+            list.innerHTML = "";
+            let count = 0;
+            const sortedComments = [...db.comments].sort((a,b) => b.timestamp - a.timestamp);
+            
+            sortedComments.forEach(data => {
+                // Only show comments for the currently viewed chapter (vimalamani OR community)
+                if(data.mangaId === currentViewMangaId && data.chapterId === currentViewChapterId) {
+                    count++;
+                    const dateStr = new Date(data.timestamp).toLocaleDateString();
+                    const author = userMap[data.userId] || { username: data.userName, avatar: null };
+                    const avatarSrc = author.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${author.username.charAt(0).toUpperCase()}`;
+
+                    const commentHTML = `
+                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)] animate-[fadeIn_0.5s_ease] flex gap-4">
+                            <img src="${avatarSrc}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-700 flex-shrink-0">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-2">
+                                    <p class="font-bold text-white uppercase text-sm tracking-wider flex items-center gap-1">
+                                    ${author.username}
+                                    ${author.username === "d_ART" ? `
+<span onclick="toggleFounder(this)" class="tick-circle">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <circle cx="12" cy="12" r="10" class="circle-bg"></circle>
+    <path d="M8.5 12.5l2 2 5-5" fill="none" class="tick-path"/>
+  </svg>
+</span>                                  ` : ""}
+                                    </p>
+                                    <span class="text-xs text-gray-500 font-bold">${dateStr}</span>
+                                </div>
+                                <p class="text-gray-300 text-sm leading-relaxed">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                            </div>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', commentHTML);
+                }
+                // for cretors
+                if(data.mangaId === currentViewMangaId && data.chapterId === currentViewChapterId) {
+                    count++;
+                    const dateStr = new Date(data.timestamp).toLocaleDateString();
+                    const author = userMap[data.userId] || { username: data.userName, avatar: null };
+                    const avatarSrc = author.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${author.username.charAt(0).toUpperCase()}`;
+
+                    const commentHTML = `
+                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)] animate-[fadeIn_0.5s_ease] flex gap-4">
+                            <img src="${avatarSrc}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-700 flex-shrink-0">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-2">
+                                    <p class="font-bold text-white uppercase text-sm tracking-wider flex items-center gap-1">
+                                    ${author.username}
+                                    ${author.username === "d_ART" || (currentViewMangaId !== 'vimalamani' && data.userId === db.mangas.find(m=>m.id===currentViewMangaId)?.authorId) ? `
+<span onclick="togglecreator(this)" class="tick-circle">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <circle cx="12" cy="12" r="10" class="circle-bg"></circle>
+    <path d="M8.5 12.5l2 2 5-5" fill="none" class="tick-path"/>
+  </svg>
+</span>                                  ` : ""}
+                                    </p>
+                                    <span class="text-xs text-gray-500 font-bold">${dateStr}</span>
+                                </div>
+                                <p class="text-gray-300 text-sm leading-relaxed">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                            </div>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', commentHTML);
+                }
+
+            });
+            document.getElementById('comment-total').innerText = count;
+
+            // Dev Panel Specific Updates
+            document.getElementById('dev-stat-reads').innerText = db.ch1.views.toLocaleString();
+            document.getElementById('dev-stat-likes').innerText = db.ch1.likes.length.toLocaleString();
+            document.getElementById('dev-stat-dislikes').innerText = db.ch1.dislikes.length.toLocaleString();
+
+            const userList = document.getElementById('dev-user-list');
+            userList.innerHTML = "";
+            document.getElementById('dev-total-users').innerText = db.users.length;
+            
+            db.users.forEach(u => {
+                const d = new Date(u.joinedAt).toLocaleDateString();
+                const aSrc = u.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${u.username.charAt(0).toUpperCase()}`;
+                userList.insertAdjacentHTML('beforeend', `
+                    <div class="flex justify-between items-center bg-[#1a1a1a] p-3 border border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <img src="${aSrc}" class="w-8 h-8 rounded-full object-cover border border-gray-700">
+                            <div>
+                                <p class="text-white font-bold text-sm uppercase">${u.username} <span class="text-[9px] bg-gray-700 px-1 rounded ml-1">${u.role || 'reader'}</span></p>
+                                <p class="text-xs text-gray-500 font-mono">${u.uid}</p>
+                            </div>
+                        </div>
+                        <span class="text-[var(--dlas-red)] text-xs font-bold uppercase">Joined ${d}</span>
+                    </div>
+                `);
+            });
+
+            // Render New Features
+            renderCommunityTab(db, userMap);
+            renderCreatorStudio(db);
+            renderAdminApprovals(db);
+            renderProfileAdditions(db, userMap);
+        };
+
+        // --- Authentication Functions ---
+        function resetAuthModal() {
+            authMode = 'login';
+            document.getElementById('auth-title').innerText = 'LOGIN';
+            document.getElementById('auth-subtitle').innerText = 'Access your account to read chapters and drop comments.';
+            document.getElementById('auth-submit-btn').innerText = 'LOGIN';
+            document.getElementById('auth-toggle-btn').innerText = "Don't have an account? Sign Up";
+            document.getElementById('auth-error').classList.add('hidden');
+            document.getElementById('auth-role-group').classList.add('hidden');
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-password').value = '';
+        }
+
+        window.toggleAuthMode = function() {
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            document.getElementById('auth-title').innerText = authMode === 'login' ? 'LOGIN' : 'SIGN UP';
+            document.getElementById('auth-subtitle').innerText = authMode === 'login' 
+                ? 'Access your account to read chapters and drop comments.' 
+                : 'Create a profile to read chapters, upload your own, and save progress.';
+            document.getElementById('auth-submit-btn').innerText = authMode === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
+            document.getElementById('auth-toggle-btn').innerText = authMode === 'login' 
+                ? "Don't have an account? Sign Up" 
+                : "Already have an account? Login";
+            document.getElementById('auth-error').classList.add('hidden');
+            
+            if (authMode === 'signup') {
+                document.getElementById('auth-role-group').classList.remove('hidden');
+            } else {
+                document.getElementById('auth-role-group').classList.add('hidden');
+            }
+        };
+
+        window.showAuthError = function(msg) {
+            const errDiv = document.getElementById('auth-error');
+            errDiv.innerText = msg;
+            errDiv.classList.remove('hidden');
+        };
+
+        window.toggleAuth = function() {
+            resetAuthModal();
+            document.getElementById('auth-modal').classList.add('active');
+        };
+
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.remove('active');
+        };
+
+        window.logoutUser = function(silent = false) {
+            isLoggedIn = false;
+            currentUserUID = null;
+            currentUserName = "Guest";
+            currentUserAvatar = null;
+            currentUserRole = "reader";
+            localStorage.removeItem('vima_active_user');
+            updateUI();
+            
+            if(['reader', 'profile', 'studio', 'admin'].some(c => document.getElementById(c).classList.contains('active'))) { 
+                window.openTab('home'); 
+            }
+            if(!silent) showToast("Successfully logged out!");
+        };
+
+        window.submitAuth = function() {
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+            
+            if (!usernameInput || !passwordInput) {
+                showAuthError("Please enter both a username and password.");
+                return;
+            }
+
+            if (authMode === 'signup' && passwordInput.length < 8) {
+                showAuthError("Password must be at least 8 characters long.");
+                return;
+            }
+
+            const db = loadDB();
+            const existingUser = db.users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
+
+            if (authMode === 'signup') {
+                if (existingUser) {
+                    showAuthError("That username is already taken. Please choose another.");
+                    return;
+                }
+                
+                currentUserUID = "user_" + Date.now();
+                currentUserName = usernameInput;
+                currentUserAvatar = null;
+                currentUserRole = document.querySelector('input[name="auth-role"]:checked').value;
+
+                db.users.push({ 
+                    uid: currentUserUID, 
+                    username: currentUserName, 
+                    password: passwordInput,
+                    avatar: currentUserAvatar,
+                    role: currentUserRole,
+                    joinedAt: Date.now() 
+                });
+                pushNotification(db, currentUserUID, `Welcome to Vimalamani Hub, ${currentUserName}!`);
+                saveDB(db);
+                showToast("Account created successfully!");
+
+            } else {
+                if (!existingUser) {
+                    showAuthError("Username not found. Have you signed up yet?");
+                    return;
+                }
+                if (existingUser.password !== passwordInput) {
+                    showAuthError("Incorrect password. Please try again.");
+                    return;
+                }
+                
+                currentUserUID = existingUser.uid;
+                currentUserName = existingUser.username;
+                currentUserAvatar = existingUser.avatar || null;
+                currentUserRole = existingUser.role || 'reader'; // backward compatibility
+                showToast("Successfully logged in!");
+            }
+
+            isLoggedIn = true;
+            localStorage.setItem('vima_active_user', currentUserUID); 
+            closeAuthModal();
+            updateUI(db);
+
+            document.getElementById('profile-username').value = currentUserName;
+            document.getElementById('profile-current-password').value = "";
+            document.getElementById('profile-new-password').value = "";
+            document.getElementById('profile-role-badge').innerText = currentUserRole;
+            const defAvatar = `https://placehold.co/150x150/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
+            document.getElementById('profile-avatar-preview').src = currentUserAvatar || defAvatar;
+
+            if (window.pendingRead) { 
+                window.openTab('reader'); 
+                window.pendingRead = false; 
+            }
+        };
+
+        window.checkPersistentLogin = function() {
+            const savedUID = localStorage.getItem('vima_active_user');
+            if (savedUID) {
+                const db = loadDB();
+                const existingUser = db.users.find(u => u.uid === savedUID);
+                if (existingUser) {
+                    isLoggedIn = true;
+                    currentUserUID = existingUser.uid;
+                    currentUserName = existingUser.username;
+                    currentUserAvatar = existingUser.avatar || null;
+                    currentUserRole = existingUser.role || 'reader';
+                    
+                    document.getElementById('profile-username').value = currentUserName;
+                    document.getElementById('profile-role-badge').innerText = currentUserRole;
+                    const defAvatar = `https://placehold.co/150x150/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
+                    document.getElementById('profile-avatar-preview').src = currentUserAvatar || defAvatar;
+                } else {
+                    localStorage.removeItem('vima_active_user');
+                }
+            }
+        };
+
+        // --- Profile Management ---
+        window.handleAvatarUpload = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-avatar-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.saveProfile = function() {
+            const newUsername = document.getElementById('profile-username').value.trim();
+            const currentPasswordInput = document.getElementById('profile-current-password').value;
+            const newPasswordInput = document.getElementById('profile-new-password').value;
+            const newAvatarData = document.getElementById('profile-avatar-preview').src;
+
+            if (!newUsername) return alert("Username cannot be empty.");
+
+            const db = loadDB();
+            const userIndex = db.users.findIndex(u => u.uid === currentUserUID);
+            if (userIndex === -1) return;
+
+            const userInDB = db.users[userIndex];
+
+            if (newPasswordInput || currentPasswordInput) {
+                if (userInDB.password !== currentPasswordInput) return alert("Incorrect Current Password.");
+                if (newPasswordInput.length < 8) return alert("Your New Password must be at least 8 characters long.");
+                userInDB.password = newPasswordInput;
+            }
+
+            if (newUsername.toLowerCase() !== currentUserName.toLowerCase()) {
+                const taken = db.users.find(u => u.username.toLowerCase() === newUsername.toLowerCase() && u.uid !== currentUserUID);
+                if (taken) return alert("That username is already taken.");
+            }
+
+            userInDB.username = newUsername;
+            currentUserName = newUsername;
+            
+            if (!newAvatarData.includes('placehold.co')) {
+                userInDB.avatar = newAvatarData;
+                currentUserAvatar = newAvatarData;
+            }
+            
+            saveDB(db);
+            document.getElementById('profile-current-password').value = "";
+            document.getElementById('profile-new-password').value = "";
+            showToast("Profile successfully updated!");
+        };
+
+        // --- DYNAMIC READER SYSTEM ---
+
+        window.attemptRead = function(mangaId, chapterId) {
+            if (!isLoggedIn) {
+                window.pendingRead = true;
+                currentViewMangaId = mangaId;
+                currentViewChapterId = chapterId;
+                toggleAuth();
+                return;
+            }
+
+            const db = loadDB();
+            currentViewMangaId = mangaId;
+            currentViewChapterId = chapterId;
+
+            const readerContainer = document.getElementById('reader-pages');
+            const titleEl = document.getElementById('reader-title');
+            const backBtn = document.getElementById('reader-back-btn');
+            readerContainer.innerHTML = '';
+
+            if (mangaId === 'vimalamani') {
+                db.ch1.views += 1;
+                titleEl.innerText = "CH 1: THE TIGER";
+                readerContainer.innerHTML = `
+                    <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+1" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
+                    <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+2" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
+                `;
+                backBtn.onclick = () => openTab('manga');
+            } else {
+                // Community Manga
+                const manga = db.mangas.find(m => m.id === mangaId);
+                if (!manga) return showToast("Manga not found");
+                const chapter = manga.chapters.find(c => c.id === chapterId);
+                if (!chapter) return showToast("Chapter not found");
+
+                chapter.views += 1;
+                titleEl.innerText = `${manga.title} - ${chapter.title}`;
+                backBtn.onclick = () => viewMangaDetail(mangaId);
+
+                if(chapter.pages && chapter.pages.length > 0) {
+                    chapter.pages.forEach((pageStr, idx) => {
+                        readerContainer.insertAdjacentHTML('beforeend', `<img src="${pageStr}" alt="Page ${idx+1}" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">`);
+                    });
+                } else {
+                    readerContainer.innerHTML = `<p class="text-white py-20">Creator hasn't uploaded pages yet.</p>`;
+                }
+            }
+            
+            saveDB(db);
+            openTab('reader');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.toggleLike = function() {
+            if(!isLoggedIn) { alert("Please log in to like."); return; }
+            const db = loadDB();
+            
+            if(currentViewMangaId === 'vimalamani') {
+                if(db.ch1.likes.includes(currentUserUID)) db.ch1.likes = db.ch1.likes.filter(id => id !== currentUserUID);
+                else { db.ch1.likes.push(currentUserUID); db.ch1.dislikes = db.ch1.dislikes.filter(id => id !== currentUserUID); }
+            } else {
+                const chapter = db.mangas.find(m=>m.id===currentViewMangaId)?.chapters.find(c=>c.id===currentViewChapterId);
+                if(chapter) {
+                    if(chapter.likes.includes(currentUserUID)) chapter.likes = chapter.likes.filter(id => id !== currentUserUID);
+                    else { chapter.likes.push(currentUserUID); chapter.dislikes = chapter.dislikes.filter(id => id !== currentUserUID); }
+                }
+            }
+            saveDB(db);
+        };
+
+        window.toggleDislike = function() {
+            if(!isLoggedIn) { alert("Please log in to dislike."); return; }
+            const db = loadDB();
+
+            if(currentViewMangaId === 'vimalamani') {
+                if(db.ch1.dislikes.includes(currentUserUID)) db.ch1.dislikes = db.ch1.dislikes.filter(id => id !== currentUserUID);
+                else { db.ch1.dislikes.push(currentUserUID); db.ch1.likes = db.ch1.likes.filter(id => id !== currentUserUID); showToast("Thanks for the feedback."); }
+            } else {
+                const chapter = db.mangas.find(m=>m.id===currentViewMangaId)?.chapters.find(c=>c.id===currentViewChapterId);
+                if(chapter) {
+                    if(chapter.dislikes.includes(currentUserUID)) chapter.dislikes = chapter.dislikes.filter(id => id !== currentUserUID);
+                    else { chapter.dislikes.push(currentUserUID); chapter.likes = chapter.likes.filter(id => id !== currentUserUID); }
+                }
+            }
+            saveDB(db);
+        };
+
+        window.postComment = function() {
+            if(!isLoggedIn) {
+                toggleAuth();
+                return;
+            }
+            const input = document.getElementById('comment-input');
+            const text = input.value.trim();
+            if (text === "") return;
+
+            const db = loadDB();
+            db.comments.push({
+                mangaId: currentViewMangaId,
+                chapterId: currentViewChapterId,
+                userId: currentUserUID,
+                userName: currentUserName,
+                text: text,
+                timestamp: Date.now()
+            });
+            saveDB(db);
+            input.value = "";
+            showToast("Comment posted!");
+        };
+
+        // --- NEW FEATURES LOGIC (COMMUNITY, STUDIO, ADMIN) ---
+
+        // View single Manga Detail (List of chapters)
+        window.viewMangaDetail = function(mangaId) {
+            const db = loadDB();
+            const manga = db.mangas.find(m => m.id === mangaId);
+            if(!manga) return;
+
+            const author = db.users.find(u => u.uid === manga.authorId);
+            const group = manga.groupId ? db.groups.find(g => g.id === manga.groupId) : null;
+            const container = document.getElementById('manga-detail-container');
+            
+            // Check if viewer can request collab
+            const isCreatorWithProject = isLoggedIn && db.mangas.some(m => m.authorId === currentUserUID && m.status === 'approved');
+            const collabBtn = (isCreatorWithProject && manga.authorId !== currentUserUID && !group) 
+                ? `<button onclick="requestCollab('${manga.authorId}', '${manga.title}')" class="mt-4 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors">Request Collaboration</button>` 
+                : '';
+
+            let chaptersHtml = manga.chapters.length === 0 ? `<p class="text-gray-500">No chapters uploaded yet.</p>` : '';
+            manga.chapters.forEach(ch => {
+                chaptersHtml += `
+                    <div class="bg-[#1a1a1a] p-4 flex justify-between items-center border border-gray-800 hover:border-blue-500 transition-colors">
+                        <span class="text-white font-bold">${ch.title}</span>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-500 font-bold">${ch.views} Reads</span>
+                            <button onclick="attemptRead('${manga.id}', '${ch.id}')" class="bg-[var(--dlas-red)] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Read</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="flex gap-8 border-b border-gray-800 pb-8 mb-8">
+                    <img src="${manga.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-48 h-auto object-cover border border-gray-700">
+                    <div>
+                        <h2 class="text-4xl heading-font text-white mb-2">${manga.title}</h2>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">By: ${group ? group.name + ' (Group)' : author?.username || 'Unknown'}</p>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4">${manga.desc || 'No description provided.'}</p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            ${(manga.tags||'').split(',').map(t => `<span class="bg-gray-800 text-gray-300 px-2 py-1 text-xs rounded">${t.trim()}</span>`).join('')}
+                        </div>
+                        ${collabBtn}
+                    </div>
+                </div>
+                <h3 class="text-2xl heading-font text-white mb-4">Chapters</h3>
+                <div class="space-y-3">
+                    ${chaptersHtml}
+                </div>
+                <div class="mt-8 text-center">
+                    <button onclick="openTab('community')" class="text-gray-500 hover:text-white font-bold uppercase tracking-widest text-xs">Back to Community</button>
+                </div>
+            `;
+            openTab('manga-detail');
+        };
+
+        const renderCommunityTab = (db, userMap) => {
+            const listSolo = document.getElementById('community-manga-list');
+            const listGroup = document.getElementById('group-manga-list');
+            listSolo.innerHTML = '';
+            listGroup.innerHTML = '';
+            
+            const approved = db.mangas.filter(m => m.status === 'approved');
+            
+            approved.forEach(m => {
+                const totalViews = m.chapters.reduce((sum, ch) => sum + ch.views, 0);
+                const html = `
+                    <div class="bg-[#111] border border-gray-800 hover:border-blue-500 transition-colors cursor-pointer group" onclick="viewMangaDetail('${m.id}')">
+                        <img src="${m.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-full h-64 object-cover border-b border-gray-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <div class="p-4">
+                            <h4 class="text-white font-bold truncate">${m.title}</h4>
+                            <p class="text-xs text-gray-500 uppercase mt-1">By ${m.groupId ? db.groups.find(g=>g.id===m.groupId)?.name : userMap[m.authorId]?.username}</p>
+                            <p class="text-xs text-[var(--dlas-red)] font-bold mt-2">${totalViews} Total Reads</p>
+                        </div>
+                    </div>
+                `;
+                if(m.groupId) listGroup.insertAdjacentHTML('beforeend', html);
+                else listSolo.insertAdjacentHTML('beforeend', html);
+            });
+
+            if(listSolo.innerHTML==='') listSolo.innerHTML = '<p class="text-gray-500 italic col-span-4">No solo projects yet.</p>';
+            if(listGroup.innerHTML==='') listGroup.innerHTML = '<p class="text-gray-500 italic col-span-4">No group projects yet.</p>';
+        };
+
+        const renderCreatorStudio = (db) => {
+            if(currentUserRole !== 'creator') return;
+
+            // Group Select
+            const gSelect = document.getElementById('studio-group-select');
+            gSelect.innerHTML = '<option value="">Personal Project (No Group)</option>';
+            db.groups.filter(g => g.members.some(m => m.uid === currentUserUID)).forEach(g => {
+                gSelect.insertAdjacentHTML('beforeend', `<option value="${g.id}">${g.name}</option>`);
+            });
+
+            // My Groups List
+            const myGroups = document.getElementById('studio-my-groups');
+            myGroups.innerHTML = '';
+            const userGroups = db.groups.filter(g => g.members.some(m => m.uid === currentUserUID));
+            if(userGroups.length === 0) myGroups.innerHTML = '<p class="text-gray-600 text-xs italic">You are not in any groups.</p>';
+            userGroups.forEach(g => {
+                myGroups.insertAdjacentHTML('beforeend', `
+                    <div class="bg-[#1a1a1a] p-3 border border-gray-700 flex justify-between items-center">
+                        <span class="text-white text-sm font-bold">${g.name}</span>
+                        <span class="text-xs text-purple-400">${g.members.length} Members</span>
+                    </div>
+                `);
+            });
+
+            // My Projects List
+            const myProjs = document.getElementById('studio-my-projects');
+            myProjs.innerHTML = '';
+            const userMangas = db.mangas.filter(m => m.authorId === currentUserUID);
+            if(userMangas.length === 0) myProjs.innerHTML = '<p class="text-gray-500 italic">No projects yet.</p>';
+            userMangas.forEach(m => {
+                const statusColor = m.status === 'approved' ? 'text-green-500' : (m.status === 'rejected' ? 'text-red-500' : 'text-yellow-500');
+                myProjs.insertAdjacentHTML('beforeend', `
+                    <div class="bg-[#1a1a1a] p-4 border border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h4 class="text-white font-bold">${m.title}</h4>
+                            <p class="text-xs font-bold uppercase tracking-widest ${statusColor} mt-1">${m.status}</p>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button onclick="addChapterUI('${m.id}')" class="flex-1 bg-gray-800 hover:bg-white hover:text-black text-white px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors">+ Chapter</button>
+                            <button onclick="viewMangaDetail('${m.id}')" class="flex-1 bg-purple-600 hover:bg-white hover:text-black text-white px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors">View</button>
+                        </div>
+                    </div>
+                `);
+            });
+        };
+
+        window.createGroup = function() {
+            const name = document.getElementById('studio-group-name').value.trim();
+            if(!name) return alert("Enter a group name");
+            const db = loadDB();
+            db.groups.push({
+                id: 'grp_' + Date.now(),
+                name: name,
+                ownerId: currentUserUID,
+                members: [{ uid: currentUserUID, role: 'Owner' }]
+            });
+            saveDB(db);
+            document.getElementById('studio-group-name').value = '';
+            showToast("Group Created!");
+        };
+
+        window.createNewManga = function() {
+            const title = document.getElementById('studio-title').value.trim();
+            const desc = document.getElementById('studio-desc').value.trim();
+            const tags = document.getElementById('studio-tags').value.trim();
+            const groupId = document.getElementById('studio-group-select').value;
+            const fileInput = document.getElementById('studio-cover');
+
+            if(!title) return alert("Title is required");
+
+            const processUpload = (coverData) => {
+                const db = loadDB();
+                db.mangas.push({
+                    id: 'manga_' + Date.now(),
+                    title, desc, tags,
+                    groupId: groupId || null,
+                    authorId: currentUserUID,
+                    status: 'pending',
+                    cover: coverData,
+                    chapters: [],
+                    createdAt: Date.now()
+                });
+                saveDB(db);
+                showToast("Manga submitted for approval!");
+                document.getElementById('studio-title').value = '';
+                document.getElementById('studio-desc').value = '';
+                document.getElementById('studio-tags').value = '';
+                fileInput.value = '';
+            };
+
+            if(fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => processUpload(e.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                processUpload(null);
+            }
+        };
+
+        window.addChapterUI = function(mangaId) {
+            const title = prompt("Enter Chapter Title (e.g. Chapter 1: Beginnings):");
+            if(!title) return;
+            // Quick simulation of page upload. In real app, we'd open a file picker.
+            // Using a single placehold for demo simplicity to avoid quota limits if heavily used, 
+            // but we'll try to let them pick files if they want via a hidden input trick.
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const files = Array.from(e.target.files);
+                if(files.length === 0) return;
+                
+                const pagesData = [];
+                let loaded = 0;
+                files.forEach((file, i) => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        pagesData[i] = ev.target.result;
+                        loaded++;
+                        if(loaded === files.length) {
+                            const db = loadDB();
+                            const m = db.mangas.find(x => x.id === mangaId);
+                            if(m) {
+                                m.chapters.push({
+                                    id: 'ch_' + Date.now(),
+                                    title: title,
+                                    pages: pagesData,
+                                    views: 0, likes: [], dislikes: []
+                                });
+                                saveDB(db);
+                                showToast(`Chapter added with ${files.length} pages!`);
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+            alert("Select the image files for your pages. Select multiple by holding Ctrl/Cmd.");
+            input.click();
+        };
+
+        const renderAdminApprovals = (db) => {
+            const list = document.getElementById('dev-pending-mangas');
+            if(!list) return; // fail safe
+            list.innerHTML = '';
+            const pendings = db.mangas.filter(m => m.status === 'pending');
+            
+            if(pendings.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 italic">No mangas pending approval.</p>';
+                return;
+            }
+
+            pendings.forEach(m => {
+                const author = db.users.find(u=>u.uid===m.authorId)?.username || 'Unknown';
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="bg-[#1a1a1a] p-4 border border-blue-900 flex justify-between items-center">
+                        <div>
+                            <h4 class="text-white font-bold">${m.title}</h4>
+                            <p class="text-xs text-gray-500 uppercase mt-1">By: ${author}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="adminApproveManga('${m.id}', true)" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1 text-xs font-bold uppercase transition-colors">Approve</button>
+                            <button onclick="adminApproveManga('${m.id}', false)" class="bg-red-700 hover:bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase transition-colors">Reject</button>
+                        </div>
+                    </div>
+                `);
+            });
+        };
+
+        window.adminApproveManga = function(id, isApproved) {
+            const db = loadDB();
+            const m = db.mangas.find(x => x.id === id);
+            if(!m) return;
+            m.status = isApproved ? 'approved' : 'rejected';
+            pushNotification(db, m.authorId, `Your manga "${m.title}" has been ${m.status}.`);
+            saveDB(db);
+            showToast(`Manga ${m.status}!`);
+        };
+
+        const renderProfileAdditions = (db, userMap) => {
+            const notifList = document.getElementById('profile-notifications');
+            if(notifList) {
+                notifList.innerHTML = '';
+                const myNotifs = db.notifications.filter(n => n.userId === currentUserUID).sort((a,b)=>b.date-a.date);
+                if(myNotifs.length === 0) notifList.innerHTML = '<p class="text-gray-500 text-sm italic">No new notifications.</p>';
+                myNotifs.forEach(n => {
+                    notifList.insertAdjacentHTML('beforeend', `<div class="bg-[#1a1a1a] p-3 border-l-2 border-blue-500 text-gray-300 text-sm">${n.message}</div>`);
+                });
+            }
+
+            const collabList = document.getElementById('profile-collabs');
+            if(collabList) {
+                collabList.innerHTML = '';
+                const myReqs = db.collabReqs.filter(r => r.targetId === currentUserUID && r.status === 'pending');
+                if(myReqs.length === 0) collabList.innerHTML = '<p class="text-gray-500 text-sm italic">No pending requests.</p>';
+                myReqs.forEach(r => {
+                    const sender = userMap[r.senderId]?.username || 'Someone';
+                    collabList.insertAdjacentHTML('beforeend', `
+                        <div class="bg-[#1a1a1a] p-3 border border-gray-700">
+                            <p class="text-white text-sm mb-2"><span class="font-bold text-[var(--dlas-red)]">${sender}</span> wants to collaborate because of your work on "${r.mangaTitle}"!</p>
+                            <div class="flex gap-2">
+                                <button onclick="resolveCollab('${r.id}', 'accepted')" class="bg-gray-700 hover:bg-green-600 text-white px-2 py-1 text-xs font-bold uppercase transition-colors">Accept</button>
+                                <button onclick="resolveCollab('${r.id}', 'rejected')" class="bg-gray-700 hover:bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase transition-colors">Decline</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+        };
+
+        window.requestCollab = function(targetId, mangaTitle) {
+            const db = loadDB();
+            if(db.collabReqs.some(r => r.senderId === currentUserUID && r.targetId === targetId && r.status === 'pending')) {
+                return showToast("Request already sent.");
+            }
+            db.collabReqs.push({
+                id: 'req_' + Date.now(),
+                senderId: currentUserUID,
+                targetId: targetId,
+                mangaTitle: mangaTitle,
+                status: 'pending',
+                date: Date.now()
+            });
+            pushNotification(db, targetId, `New Collab Request from ${currentUserName}! Check Profile.`);
+            saveDB(db);
+            showToast("Collaboration request sent!");
+        };
+
+        window.resolveCollab = function(reqId, status) {
+            const db = loadDB();
+            const req = db.collabReqs.find(r => r.id === reqId);
+            if(req) {
+                req.status = status;
+                pushNotification(db, req.senderId, `${currentUserName} has ${status} your collab request.`);
+                saveDB(db);
+                showToast(`Request ${status}.`);
+            }
+        };
+
+        // --- Navigation ---
+        window.openTab = function(tabId) {
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            const footer = document.getElementById('main-footer');
+            if (tabId === 'reader') footer.style.display = 'none';
+            else footer.style.display = 'block';
+
+            if (tabId !== 'reader' && tabId !== 'admin' && tabId !== 'profile' && tabId !== 'manga-detail') {
+                const clickedLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(tabId));
+                if (clickedLink) clickedLink.classList.add('active');
+            } else if (tabId === 'reader' || tabId === 'manga-detail') {
+                // If it's Vimalamani reader context, highlight original Manga tab. Else highlight Community.
+                const highlightTab = currentViewMangaId === 'vimalamani' ? 'manga' : 'community';
+                const hlLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(highlightTab));
+                if (hlLink) hlLink.classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Initialize UI and Persistent Login on load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkPersistentLogin();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
