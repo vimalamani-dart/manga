@@ -8,46 +8,42 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-.tick-circle {
-  display: inline-block;
-  transform-origin: center;
-  animation: floatSpin 2s infinite ease-in-out;
-  cursor: pointer;
-}
+        .tick-circle {
+          display: inline-block;
+          transform-origin: center;
+          animation: floatSpin 2s infinite ease-in-out;
+          cursor: pointer;
+        }
 
-/* Circle background starts red */
-.circle-bg {
-  fill: #ffd700; /* red initially */
-  stroke: #ffc700;
-  stroke-width: 1;
-  transition: fill 0.5s ease; /* smooth red → gold transition */
-}
+        .circle-bg {
+          fill: #ffd700;
+          stroke: #ffc700;
+          stroke-width: 1;
+          transition: fill 0.5s ease;
+        }
 
-/* White check mark with shine */
-.tick-path {
-  stroke: white;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 3px #fff);
-  transition: filter 0.5s ease;
-}
+        .tick-path {
+          stroke: white;
+          stroke-width: 2;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          filter: drop-shadow(0 0 3px #fff);
+          transition: filter 0.5s ease;
+        }
 
-/* On hover or active, circle turns gold */
-.tick-circle:hover .circle-bg,
-.tick-circle.active .circle-bg {
-  fill: #cc0000; /* gold */
-  stroke: #990000;
-}
+        .tick-circle:hover .circle-bg,
+        .tick-circle.active .circle-bg {
+          fill: #cc0000;
+          stroke: #990000;
+        }
 
-/* Optional: make tick glow more on gold */
-.tick-circle:hover .tick-path,
-.tick-circle.active .tick-path {
-  filter: drop-shadow(0 0 6px #fff);
-}
-</style>
-    <style>
+        .tick-circle:hover .tick-path,
+        .tick-circle.active .tick-path {
+          filter: drop-shadow(0 0 6px #fff);
+        }
+
         :root {
             --dlas-bg: #1c1c1c;
             --dlas-black: #000000;
@@ -106,9 +102,19 @@
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
 
-        /* Toast Animation Classes */
         .toast-hidden { opacity: 0; transform: translate(-50%, -20px); pointer-events: none; }
         .toast-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+        
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--dlas-red);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="antialiased">
@@ -118,17 +124,21 @@
         Notification
     </div>
 
+    <!-- App Loading Overlay -->
+    <div id="app-loading" class="fixed inset-0 bg-[#0a0a0a] z-[99999] flex flex-col items-center justify-center transition-opacity duration-500">
+        <h1 class="heading-font text-5xl text-[var(--dlas-red)] mb-4">VIMALAMANI</h1>
+        <div class="loader mb-4"></div>
+        <p class="text-gray-500 font-bold tracking-widest uppercase text-xs">Connecting to Server...</p>
+    </div>
+
     <header class="bg-[#151515] border-b border-black/50 shadow-md relative z-50">
         <div class="max-w-7xl mx-auto px-6 pt-6 pb-2 flex items-center justify-between">
             <div class="flex space-x-4 text-[var(--dlas-red)] w-1/3">
-                <a href="#" target="_blank" class="hover:text-white transition-colors">
+                <a href="#" class="hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                 </a>
-                <a href="#" target="_blank" class="hover:text-white transition-colors">
+                <a href="#" class="hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-                </a>
-                <a href="#" target="_blank" class="hover:text-white transition-colors">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
                 </a>
             </div>
 
@@ -161,14 +171,12 @@
             <button class="nav-link" onclick="openTab('characters')">Characters</button>
             <button class="nav-link" onclick="openTab('about')">About me <span class="text-[10px] ml-1">▼</span></button>
             <button class="nav-link" onclick="openTab('manga')">My Manga ("VIMALAMANI") <span class="text-[10px] ml-1">▼</span></button>
-            <!-- NEW FEATURES NAVIGATION -->
             <button class="nav-link text-blue-400" onclick="openTab('community')">Community Manga <span class="text-[10px] ml-1">▼</span></button>
             <button class="nav-link text-purple-400 hidden" id="nav-studio" onclick="openTab('studio')">Creator Studio</button>
         </nav>
     </header>
 
     <main class="min-h-[80vh]">
-
         <!-- HOME -->
         <section id="home" class="tab-pane active py-32 px-6">
             <div class="max-w-5xl mx-auto text-center">
@@ -176,7 +184,7 @@
                 <p class="text-[15px] text-[#cccccc] font-medium max-w-2xl mx-auto leading-relaxed">
                     Welcome to the official hub for the Vimalamani manga. Explore the lore, meet the characters, and follow the progress of the upcoming chapters. Or visit the Community to see fan-created projects.
                 </p>
-                <div class="mt-12 flex justify-center gap-6">
+                <div class="mt-12 flex flex-col sm:flex-row justify-center gap-6">
                     <button onclick="attemptRead('vimalamani', 'ch1')" class="border-2 border-[var(--dlas-red)] text-[var(--dlas-red)] hover:bg-[var(--dlas-red)] hover:text-white px-8 py-3 heading-font text-xl transition-all cursor-pointer">START READING</button>
                     <button onclick="openTab('community')" class="border-2 border-gray-500 text-gray-400 hover:border-white hover:text-white px-8 py-3 heading-font text-xl transition-all cursor-pointer">COMMUNITY HUB</button>
                 </div>
@@ -187,7 +195,7 @@
         <section id="about" class="tab-pane py-24 px-6 md:px-12">
             <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                 <div class="pr-0 md:pr-12">
-                    <h2 class="text-[var(--dlas-red)] text-[2.8rem] md:text-[3.5rem] heading-font leading-[1.1] mb-8 lowercase normal-case tracking-normal" style="text-transform: none;">
+                    <h2 class="text-[var(--dlas-red)] text-[2.8rem] md:text-[3.5rem] heading-font leading-[1.1] mb-8 normal-case tracking-normal">
                         ‘How long have you<br>been drawing for?’
                     </h2>
                     <div class="space-y-6 text-[#cccccc] text-[15px] leading-[1.8] font-medium max-w-[95%]">
@@ -197,7 +205,7 @@
                 </div>
                 <div class="flex justify-center md:justify-end">
                     <div class="w-full max-w-[420px] aspect-square bg-[#0a0a0a] about-image-wrapper p-2">
-                        <img src="https://placehold.co/800x800/222222/555555?text=YOUR+PORTRAIT" alt="About the Artist" class="w-full h-full object-cover">
+                        <img src="https://placehold.co/800x800/222222/555555?text=AUTHOR" alt="About the Artist" class="w-full h-full object-cover">
                         <div class="about-image-overlay"></div>
                     </div>
                 </div>
@@ -206,7 +214,6 @@
 
         <!-- CHARACTERS -->
         <section id="characters" class="tab-pane py-24 px-6 md:px-12">
-            <!-- (Existing Content preserved) -->
             <div class="max-w-[1400px] mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                     <div class="flex flex-col items-center">
@@ -231,7 +238,7 @@
         <!-- MANGA ARCHIVE (Original) -->
         <section id="manga" class="tab-pane py-32 px-6 text-center">
             <h2 class="text-5xl heading-font text-[var(--dlas-red)] mb-8">VIMALAMANI: THE ARCHIVE</h2>
-            <p class="text-gray-400 mb-12">Select a chapter below. You must be signed in to read.</p>
+            <p class="text-gray-400 mb-12">Select a chapter below.</p>
             
             <div class="flex flex-col items-center gap-6 max-w-2xl mx-auto">
                 <button onclick="attemptRead('vimalamani', 'ch1')" class="w-full bg-[#111] border border-gray-800 p-6 flex flex-col sm:flex-row justify-between items-center hover:border-[var(--dlas-red)] hover:bg-[#1a1a1a] transition-colors cursor-pointer text-left group gap-4">
@@ -247,29 +254,29 @@
             </div>
         </section>
 
-        <!-- --- NEW FEATURE: COMMUNITY TAB --- -->
+        <!-- COMMUNITY TAB -->
         <section id="community" class="tab-pane py-24 px-6 md:px-12">
             <div class="max-w-6xl mx-auto">
                 <h2 class="text-5xl heading-font text-blue-500 mb-8 border-b border-gray-800 pb-4">COMMUNITY MANGA</h2>
-                <div id="community-manga-list" class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
-                    <p class="text-gray-500 italic col-span-4">No community manga uploaded yet.</p>
+                <div id="community-manga-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <p class="text-gray-500 italic col-span-4">Loading community manga...</p>
                 </div>
 
                 <h2 class="text-5xl heading-font text-purple-500 mb-8 border-b border-gray-800 pb-4">GROUP PROJECTS</h2>
-                <div id="group-manga-list" class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <p class="text-gray-500 italic col-span-4">No group projects uploaded yet.</p>
+                <div id="group-manga-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                    <p class="text-gray-500 italic col-span-4">Loading group projects...</p>
                 </div>
             </div>
         </section>
 
-        <!-- --- NEW FEATURE: COMMUNITY MANGA DETAIL --- -->
+        <!-- COMMUNITY MANGA DETAIL -->
         <section id="manga-detail" class="tab-pane py-24 px-6 md:px-12">
             <div class="max-w-4xl mx-auto bg-[#111] border border-gray-800 p-8" id="manga-detail-container">
                 <!-- Injected via JS -->
             </div>
         </section>
 
-        <!-- --- NEW FEATURE: CREATOR STUDIO --- -->
+        <!-- CREATOR STUDIO -->
         <section id="studio" class="tab-pane py-24 px-6 md:px-12">
             <div class="max-w-6xl mx-auto">
                 <h2 class="text-5xl heading-font text-purple-400 mb-8 border-b border-gray-800 pb-4">CREATOR STUDIO</h2>
@@ -278,7 +285,13 @@
                     <!-- Upload Form -->
                     <div class="bg-[#111] p-6 border border-gray-800">
                         <h3 class="text-2xl heading-font text-white mb-6">Create New Manga</h3>
-                        <div class="space-y-4">
+                        <div class="space-y-4 relative">
+                            <!-- Overlay for uploading state -->
+                            <div id="upload-overlay" class="absolute inset-0 bg-[#111]/90 z-10 hidden flex-col items-center justify-center">
+                                <div class="loader mb-2"></div>
+                                <p class="text-[var(--dlas-red)] font-bold uppercase text-xs tracking-widest" id="upload-status">Processing Image...</p>
+                            </div>
+
                             <input type="text" id="studio-title" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none" placeholder="Manga Title">
                             <textarea id="studio-desc" rows="3" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none resize-none" placeholder="Description / Synopsis"></textarea>
                             <input type="text" id="studio-tags" class="w-full bg-[#1a1a1a] border border-gray-700 p-3 text-white focus:border-purple-500 outline-none" placeholder="Tags (comma separated)">
@@ -291,7 +304,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cover Image</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cover Image (Will be optimized)</label>
                                 <input type="file" id="studio-cover" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
                             </div>
 
@@ -326,20 +339,26 @@
                 <div class="bg-[#111] p-6 border border-gray-800">
                     <h3 class="text-2xl heading-font text-white mb-6">My Uploaded Projects</h3>
                     <div id="studio-my-projects" class="space-y-4">
-                        <p class="text-gray-500 italic">No projects yet.</p>
+                        <p class="text-gray-500 italic">Loading projects...</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- READER (Now Dynamic) -->
+        <!-- READER -->
         <section id="reader" class="tab-pane py-12 px-6 bg-[#0a0a0a] min-h-screen">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-6 mb-12">
                     <button id="reader-back-btn" class="text-gray-400 hover:text-[var(--dlas-red)] flex items-center gap-2 font-bold uppercase text-sm tracking-widest transition-colors">
                         <span>← Back</span>
                     </button>
-                    <h2 class="heading-font text-2xl text-white m-0" id="reader-title">CH 1: THE TIGER</h2>
+                    <h2 class="heading-font text-2xl text-white m-0 truncate px-4 text-center flex-1" id="reader-title">Loading...</h2>
+                    
+                    <!-- NEW: Share Button -->
+                    <button onclick="shareChapter()" class="text-blue-400 hover:text-white flex items-center gap-2 font-bold uppercase text-sm tracking-widest transition-colors" title="Copy Link to Clipboard">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        <span class="hidden sm:inline">Share</span>
+                    </button>
                 </div>
 
                 <div class="flex flex-col items-center gap-4 w-full" id="reader-pages">
@@ -350,7 +369,7 @@
                     <p class="heading-font text-[var(--dlas-red)] text-3xl mb-2" id="reader-end-text">END OF CHAPTER</p>
                     <p class="text-gray-500 text-sm font-bold uppercase tracking-widest mb-12">Thank you for reading</p>
                     
-                    <div class="max-w-2xl mx-auto bg-[#111] border border-gray-800 p-8 text-left">
+                    <div class="max-w-2xl mx-auto bg-[#111] border border-gray-800 p-4 sm:p-8 text-left">
                         <div class="flex justify-between items-center border-b border-gray-800 pb-6 mb-6">
                             <div class="flex gap-6">
                                 <button id="btn-like" onclick="toggleLike()" class="flex items-center gap-2 text-gray-400 hover:text-[var(--dlas-red)] transition-colors font-bold group">
@@ -373,7 +392,8 @@
                         </div>
 
                         <div class="space-y-4" id="comment-list">
-                            <!-- Local comments appear here -->
+                            <!-- Realtime comments appear here -->
+                            <p class="text-gray-500 italic text-center">Loading comments...</p>
                         </div>
                     </div>
                 </div>
@@ -384,7 +404,14 @@
         <section id="profile" class="tab-pane py-24 px-6 md:px-12">
             <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
                 <!-- Left: Profile Info -->
-                <div class="md:col-span-2 bg-[#111] border border-gray-800 p-8">
+                <div class="md:col-span-2 bg-[#111] border border-gray-800 p-8 relative">
+                    
+                    <!-- Overlay for uploading state -->
+                    <div id="profile-upload-overlay" class="absolute inset-0 bg-[#111]/90 z-10 hidden flex-col items-center justify-center">
+                        <div class="loader mb-2"></div>
+                        <p class="text-[var(--dlas-red)] font-bold uppercase text-xs tracking-widest">Saving Profile...</p>
+                    </div>
+
                     <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
                         <h2 class="text-4xl heading-font text-white">YOUR PROFILE</h2>
                         <button onclick="logoutUser()" class="text-gray-500 hover:text-[var(--dlas-red)] font-bold text-sm uppercase tracking-widest transition-colors flex items-center gap-2">
@@ -401,7 +428,7 @@
                                     <span class="text-white text-xs font-bold uppercase tracking-widest">Change</span>
                                 </div>
                             </div>
-                            <label class="text-xs text-gray-500 font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors border border-gray-700 px-4 py-2 hover:border-white">
+                            <label class="text-xs text-gray-500 font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors border border-gray-700 px-4 py-2 hover:border-white text-center">
                                 Upload New Picture
                                 <input type="file" id="profile-avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                             </label>
@@ -451,12 +478,12 @@
                 <div class="bg-[#111] border border-gray-800 p-8">
                     <h2 class="text-2xl heading-font text-white mb-6 border-b border-gray-800 pb-4">NOTIFICATIONS</h2>
                     <div id="profile-notifications" class="space-y-4 max-h-60 overflow-y-auto pr-2">
-                        <p class="text-gray-500 text-sm italic">No new notifications.</p>
+                        <p class="text-gray-500 text-sm italic">Loading notifications...</p>
                     </div>
 
                     <h2 class="text-2xl heading-font text-white mt-10 mb-6 border-b border-gray-800 pb-4">COLLAB REQUESTS</h2>
                     <div id="profile-collabs" class="space-y-4 max-h-60 overflow-y-auto pr-2">
-                        <p class="text-gray-500 text-sm italic">No pending requests.</p>
+                        <p class="text-gray-500 text-sm italic">Loading requests...</p>
                     </div>
                 </div>
             </div>
@@ -471,7 +498,7 @@
                     <div class="bg-[#111] border border-gray-800 p-6">
                         <h3 class="text-2xl heading-font text-white mb-6">Registered Members (<span id="dev-total-users">0</span>)</h3>
                         <div class="max-h-[400px] overflow-y-auto space-y-3 pr-2" id="dev-user-list">
-                            <p class="text-gray-500 italic">No users found.</p>
+                            <p class="text-gray-500 italic">Loading users...</p>
                         </div>
                     </div>
 
@@ -496,20 +523,19 @@
                     </div>
                 </div>
 
-                <!-- --- NEW FEATURE: ADMIN APPROVAL SYSTEM --- -->
+                <!-- ADMIN APPROVAL SYSTEM -->
                 <div class="bg-[#111] border border-blue-900 p-6 mb-8">
                     <h3 class="text-2xl heading-font text-blue-400 mb-6">Pending Manga Approvals</h3>
                     <div id="dev-pending-mangas" class="space-y-4">
-                        <p class="text-gray-500 italic">No mangas pending approval.</p>
+                        <p class="text-gray-500 italic">Loading approvals...</p>
                     </div>
                 </div>
 
-                <!-- DANGER ZONE: Reset Database -->
                 <div class="mt-12 bg-red-950/20 border border-red-900 p-8 text-center">
                     <h3 class="text-2xl heading-font text-red-500 mb-2">DANGER ZONE</h3>
-                    <p class="text-red-300 text-sm mb-6 max-w-xl mx-auto font-medium">This action will permanently delete all registered users, comments, likes, mangas, and views from your browser's local storage. This cannot be undone.</p>
-                    <button onclick="resetDatabase()" class="bg-red-700 hover:bg-red-600 text-white font-bold uppercase tracking-widest px-8 py-4 transition-colors">
-                        RESET ALL DATA
+                    <p class="text-red-300 text-sm mb-6 max-w-xl mx-auto font-medium">This will only log you out in the Firebase version. Actual database resets require Firebase Console access.</p>
+                    <button onclick="logoutUser()" class="bg-red-700 hover:bg-red-600 text-white font-bold uppercase tracking-widest px-8 py-4 transition-colors">
+                        FORCE LOGOUT
                     </button>
                 </div>
             </div>
@@ -520,7 +546,7 @@
     <!-- Footer -->
     <footer id="main-footer" class="bg-[#111111] py-12 px-6 border-t border-black text-center mt-12 relative">
         <p class="text-gray-600 text-[11px] font-bold uppercase tracking-widest">
-            © 2025 Vimalamani. All artwork and story by the author. Community content owned by respective creators.
+            © 2026 Vimalamani. All artwork and story by the author. Community content owned by respective creators. Powered by Firebase.
         </p>
         <button onclick="attemptAdminAccess()" class="absolute bottom-4 right-4 text-gray-800 hover:text-[var(--dlas-red)] text-[10px] font-bold uppercase tracking-widest transition-colors">DEV</button>
     </footer>
@@ -549,7 +575,6 @@
                     </div>
                 </div>
 
-                <!-- --- NEW FEATURE: ROLE SELECTOR FOR SIGNUP --- -->
                 <div id="auth-role-group" class="hidden pt-2 border-t border-gray-800 mt-4">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Account Type</label>
                     <div class="flex gap-6 text-white text-sm">
@@ -558,8 +583,9 @@
                     </div>
                 </div>
                 
-                <button id="auth-submit-btn" onclick="submitAuth()" class="w-full bg-[var(--dlas-red)] text-white py-3 heading-font text-2xl hover:bg-white hover:text-black transition-colors mt-4">
-                    LOGIN
+                <button id="auth-submit-btn" onclick="submitAuth()" class="w-full bg-[var(--dlas-red)] text-white py-3 heading-font text-2xl hover:bg-white hover:text-black transition-colors mt-4 relative flex justify-center items-center">
+                    <span id="auth-submit-text">LOGIN</span>
+                    <div id="auth-loader" class="loader hidden absolute right-4 w-5 h-5 border-2"></div>
                 </button>
             </div>
 
@@ -587,48 +613,56 @@
         </defs>
     </svg>
 
-    <!-- LOCAL STORAGE JAVASCRIPT LOGIC -->
-    <script>
-function toggleFounder(el) {
-  // Toggle Founder badge
-  let next = el.nextElementSibling;
+    <!-- FIREBASE INTEGRATION -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, addDoc, onSnapshot, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  if (next && next.classList.contains("founder")) {
-    next.style.opacity = next.style.opacity === "0" ? "1" : "0";
-  } else {
-    let tag = document.createElement("span");
-    tag.innerText = "Founder";
-    tag.className = "founder";
-    tag.style.marginLeft = "5px";
-    tag.style.fontSize = "10px";
-    tag.style.opacity = "0";
-    tag.style.transition = "opacity 0.3s ease";
-    tag.style.color = "rgba(245, 241, 230, 0.7)";
-    el.parentNode.insertBefore(tag, el.nextSibling);
+        // Extract configuration from environment safely
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'vimalamani-hub-default';
+        const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-    requestAnimationFrame(() => { tag.style.opacity = "1"; });
-  }
+        let app, db, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Firebase Initialization Error:", e);
+        }
 
-  // Toggle gold circle
-  el.classList.toggle("active");
-}
-</script>
-    <script>
-        // State variables
-        let isLoggedIn = false;
-        let currentUserUID = null;
-        let currentUserName = "Guest";
-        let currentUserAvatar = null;
-        let currentUserRole = "reader";
-        let authMode = 'login'; // 'login' or 'signup'
+        // --- GLOBAL STATE ---
+        // We use a custom users collection to map usernames to Canvas UIDs, fulfilling UI requirements while staying secure
+        window.isLoggedIn = false;
+        window.currentUserUID = null; // Refers to Document ID in 'users' collection
+        window.currentUserName = "Guest";
+        window.currentUserAvatar = null;
+        window.currentUserRole = "reader";
+        
+        window.appState = {
+            users: [],
+            mangas: [],
+            comments: [],
+            groups: [],
+            collabReqs: [],
+            globalStats: { views: 0, likes: [], dislikes: [] },
+            notifications: []
+        };
+
+        let authMode = 'login';
         window.pendingRead = false;
-        let toastTimeout = null;
-
-        // Current Reader State Context
         let currentViewMangaId = 'vimalamani';
         let currentViewChapterId = 'ch1';
+        let firebaseReady = false;
 
-        // --- ASMR Audio Context Setup ---
+        // Firebase Strict Path Builders
+        const getPublicCollection = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
+        const getPublicDoc = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+        const getPrivateCollection = (colName) => window.currentUserUID ? collection(db, 'artifacts', appId, 'users', window.currentUserUID, colName) : null;
+
+        // --- AUDIO / UI HELPERS ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -648,7 +682,7 @@ function toggleFounder(el) {
             osc.stop(audioCtx.currentTime + 0.5);
         }
 
-        // --- Toast Notification System ---
+        let toastTimeout = null;
         window.showToast = function(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -662,82 +696,538 @@ function toggleFounder(el) {
             }, 3000);
         };
 
-        // --- Password Visibility Toggle ---
-        window.togglePasswordVisibility = function(inputId, btnElement) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                btnElement.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>`;
-            } else {
-                input.type = "password";
-                btnElement.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
-            }
-        };
+        // Compress image before Base64 encoding to prevent Firestore 1MB limits
+        function compressImage(file, maxWidth = 1200, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
 
-        // --- Database Simulator via LocalStorage ---
-        const loadDB = () => {
-            return {
-                users: JSON.parse(localStorage.getItem('vima_users')) || [],
-                ch1: JSON.parse(localStorage.getItem('vima_ch1_stats')) || { views: 0, likes: [], dislikes: [] },
-                comments: JSON.parse(localStorage.getItem('vima_comments')) || [],
-                // New Features Schema
-                mangas: JSON.parse(localStorage.getItem('vima_mangas')) || [],
-                groups: JSON.parse(localStorage.getItem('vima_groups')) || [],
-                notifications: JSON.parse(localStorage.getItem('vima_notifications')) || [],
-                collabReqs: JSON.parse(localStorage.getItem('vima_collabReqs')) || []
-            };
-        };
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
-        const saveDB = (db) => {
-            localStorage.setItem('vima_users', JSON.stringify(db.users));
-            localStorage.setItem('vima_ch1_stats', JSON.stringify(db.ch1));
-            localStorage.setItem('vima_comments', JSON.stringify(db.comments));
-            localStorage.setItem('vima_mangas', JSON.stringify(db.mangas));
-            localStorage.setItem('vima_groups', JSON.stringify(db.groups));
-            localStorage.setItem('vima_notifications', JSON.stringify(db.notifications));
-            localStorage.setItem('vima_collabReqs', JSON.stringify(db.collabReqs));
-            updateUI(db);
-        };
 
-        // Helper to send a notification
-        const pushNotification = (db, userId, msg) => {
-            db.notifications.push({ id: 'notif_'+Date.now(), userId, message: msg, date: Date.now() });
-        };
-
-        // --- Global Admin Function ---
-        window.attemptAdminAccess = function() {
-            const pwd = prompt("Developer access is restricted.\nPlease enter the developer password:");
-            if (pwd === "admin123") {
-                showToast("Developer mode unlocked");
-                openTab('admin');
-            } else if (pwd !== null) {
-                alert("Incorrect developer password.");
-            }
-        };
-
-        window.resetDatabase = function() {
-            if (confirm("Are you entirely sure you want to delete all users, comments, likes, mangas, and views? This cannot be undone.")) {
-                localStorage.clear();
-                logoutUser(true);
-                openTab('home');
-                showToast("Database successfully reset!");
-            }
-        };
-
-        // --- UI Updater ---
-        const updateUI = (db = loadDB()) => {
+        // --- FIREBASE LISTENERS (The Core of Real-Time) ---
+        function setupListeners() {
+            if (!auth.currentUser) return; // Rule 3: Auth Before Queries
             
-            // Header Authentication UI
-            if (isLoggedIn && currentUserUID) {
+            // Users
+            onSnapshot(getPublicCollection('users'), (snapshot) => {
+                window.appState.users = snapshot.docs.map(d => ({uid: d.id, ...d.data()}));
+                // Auto-update logged-in user state if changed externally
+                if (window.isLoggedIn) {
+                    const me = window.appState.users.find(u => u.uid === window.currentUserUID);
+                    if (me) {
+                        window.currentUserName = me.username;
+                        window.currentUserAvatar = me.avatar;
+                        window.currentUserRole = me.role;
+                    }
+                }
+                updateUI();
+            }, (error) => console.error("Error listening to users:", error));
+
+            // Mangas
+            onSnapshot(getPublicCollection('mangas'), (snapshot) => {
+                window.appState.mangas = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                updateUI();
+                // If currently reading, update reader specifically
+                if(document.getElementById('reader').classList.contains('active')) updateReaderUI();
+                // If currently viewing details, update details
+                if(document.getElementById('manga-detail').classList.contains('active')) window.viewMangaDetail(currentViewMangaId);
+            }, (error) => console.error("Error listening to mangas:", error));
+
+            // Comments
+            onSnapshot(getPublicCollection('comments'), (snapshot) => {
+                window.appState.comments = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                updateUI();
+            }, (error) => console.error("Error listening to comments:", error));
+
+            // Groups
+            onSnapshot(getPublicCollection('groups'), (snapshot) => {
+                window.appState.groups = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                updateUI();
+            }, (error) => console.error("Error listening to groups:", error));
+
+            // Collab Reqs
+            onSnapshot(getPublicCollection('collabReqs'), (snapshot) => {
+                window.appState.collabReqs = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                updateUI();
+            }, (error) => console.error("Error listening to collabs:", error));
+
+            // Global Stats (Vimalamani hardcoded)
+            onSnapshot(getPublicDoc('stats', 'vimalamani_ch1'), (docSnap) => {
+                if (docSnap.exists()) {
+                    window.appState.globalStats = docSnap.data();
+                } else {
+                    // Initialize if doesn't exist
+                    setDoc(getPublicDoc('stats', 'vimalamani_ch1'), { views: 0, likes: [], dislikes: [] });
+                }
+                updateUI();
+            }, (error) => console.error("Error listening to stats:", error));
+        }
+
+        function setupPrivateListeners() {
+            if (!window.isLoggedIn || !window.currentUserUID) return;
+            const notifCol = getPrivateCollection('notifications');
+            if(notifCol) {
+                onSnapshot(notifCol, (snapshot) => {
+                    window.appState.notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                    updateUI();
+                }, (error) => console.error("Error listening to notifications:", error));
+            }
+        }
+
+
+        // --- AUTHENTICATION ---
+        async function bootApp() {
+            if (!app) return;
+            
+            try {
+                // Mandatory Rule 3: Auth first.
+                if (initialToken) {
+                    await signInWithCustomToken(auth, initialToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                firebaseReady = true;
+                document.getElementById('app-loading').classList.add('opacity-0');
+                setTimeout(() => document.getElementById('app-loading').style.display = 'none', 500);
+                
+                setupListeners();
+                checkSession();
+
+            } catch (error) {
+                console.error("Auth Boot Error:", error);
+                document.getElementById('app-loading').innerHTML = `<h1 class="text-white">Connection Error. Please reload.</h1>`;
+            }
+        }
+
+        // Custom session management linked to Firebase Anonymous UID
+        async function checkSession() {
+            const savedUID = localStorage.getItem('vima_session');
+            if (savedUID) {
+                // Wait for users to load
+                let retries = 0;
+                const check = setInterval(() => {
+                    if (window.appState.users.length > 0 || retries > 20) {
+                        clearInterval(check);
+                        const u = window.appState.users.find(x => x.uid === savedUID);
+                        if(u) {
+                            finalizeLogin(u);
+                        } else {
+                            localStorage.removeItem('vima_session');
+                        }
+                    }
+                    retries++;
+                }, 100);
+            }
+        }
+
+        window.submitAuth = async function() {
+            if (!firebaseReady) return showToast("Still connecting to server...");
+            
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const btnText = document.getElementById('auth-submit-text');
+            const loader = document.getElementById('auth-loader');
+            
+            if (!username || !password) return showAuthError("Username and password required.");
+            if (authMode === 'signup' && password.length < 8) return showAuthError("Password must be 8+ chars.");
+
+            btnText.classList.add('opacity-0');
+            loader.classList.remove('hidden');
+
+            try {
+                // Instead of searching arrays, we query Firestore to keep it server-authoritative
+                // RULE 2: No Complex Queries. So we fetch all and find. (Or just check the ID we construct)
+                const docId = 'user_' + username.toLowerCase();
+                const userRef = getPublicDoc('users', docId);
+                const userSnap = await getDoc(userRef);
+
+                if (authMode === 'signup') {
+                    if (userSnap.exists()) {
+                        throw new Error("Username already taken.");
+                    }
+                    
+                    const role = document.querySelector('input[name="auth-role"]:checked').value;
+                    const newUser = {
+                        uid: docId,
+                        username: username,
+                        password: password, // In a real app, hash this. Allowed here per prototype constraints.
+                        role: role,
+                        avatar: null,
+                        joinedAt: Date.now()
+                    };
+                    
+                    await setDoc(userRef, newUser);
+                    
+                    // Welcome Notif
+                    const notifRef = collection(db, 'artifacts', appId, 'users', docId, 'notifications');
+                    await addDoc(notifRef, { message: `Welcome to Vimalamani, ${username}!`, date: Date.now() });
+                    
+                    finalizeLogin(newUser);
+                    showToast("Account created!");
+                    
+                } else {
+                    // Login
+                    if (!userSnap.exists()) throw new Error("User not found.");
+                    const userData = userSnap.data();
+                    if (userData.password !== password) throw new Error("Incorrect password.");
+                    
+                    finalizeLogin(userData);
+                    showToast("Logged in successfully!");
+                }
+            } catch (err) {
+                showAuthError(err.message);
+            } finally {
+                btnText.classList.remove('opacity-0');
+                loader.classList.add('hidden');
+            }
+        };
+
+        function finalizeLogin(userData) {
+            window.isLoggedIn = true;
+            window.currentUserUID = userData.uid;
+            window.currentUserName = userData.username;
+            window.currentUserAvatar = userData.avatar;
+            window.currentUserRole = userData.role;
+            localStorage.setItem('vima_session', userData.uid);
+            
+            setupPrivateListeners(); // Listen to personal notifications
+            closeAuthModal();
+            updateUI();
+            
+            // Populate Profile Tab
+            document.getElementById('profile-username').value = userData.username;
+            document.getElementById('profile-role-badge').innerText = userData.role;
+            document.getElementById('profile-avatar-preview').src = userData.avatar || `https://placehold.co/150x150/1a1a1a/ffffff?text=${userData.username.charAt(0).toUpperCase()}`;
+
+            if (window.pendingRead) { 
+                window.openTab('reader'); 
+                window.pendingRead = false; 
+            }
+        }
+
+        window.logoutUser = function() {
+            window.isLoggedIn = false;
+            window.currentUserUID = null;
+            localStorage.removeItem('vima_session');
+            updateUI();
+            if(['reader', 'profile', 'studio', 'admin'].some(c => document.getElementById(c).classList.contains('active'))) { 
+                window.openTab('home'); 
+            }
+            showToast("Logged out");
+        };
+
+
+        // --- ACTION HANDLERS (Writing to Firestore) ---
+        
+        window.saveProfile = async function() {
+            const newUsername = document.getElementById('profile-username').value.trim();
+            const currPwd = document.getElementById('profile-current-password').value;
+            const newPwd = document.getElementById('profile-new-password').value;
+            const avatarSrc = document.getElementById('profile-avatar-preview').src;
+
+            if (!newUsername) return alert("Username needed.");
+            
+            const overlay = document.getElementById('profile-upload-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            try {
+                const userRef = getPublicDoc('users', window.currentUserUID);
+                const snap = await getDoc(userRef);
+                const data = snap.data();
+
+                let updates = {};
+                if (currPwd || newPwd) {
+                    if (data.password !== currPwd) throw new Error("Incorrect current password.");
+                    if (newPwd.length < 8) throw new Error("New password too short.");
+                    updates.password = newPwd;
+                }
+
+                // Check username uniqueness if changed
+                if (newUsername.toLowerCase() !== data.username.toLowerCase()) {
+                    const checkRef = getPublicDoc('users', 'user_' + newUsername.toLowerCase());
+                    const checkSnap = await getDoc(checkRef);
+                    if(checkSnap.exists()) throw new Error("Username taken.");
+                    updates.username = newUsername;
+                }
+
+                if (!avatarSrc.includes('placehold.co')) {
+                    updates.avatar = avatarSrc;
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    await updateDoc(userRef, updates);
+                    showToast("Profile updated!");
+                    document.getElementById('profile-current-password').value = '';
+                    document.getElementById('profile-new-password').value = '';
+                } else {
+                    showToast("No changes made.");
+                }
+            } catch (e) {
+                alert(e.message);
+            } finally {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+        };
+
+        window.postComment = async function() {
+            if(!window.isLoggedIn) return toggleAuth();
+            const input = document.getElementById('comment-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.disabled = true;
+            try {
+                await addDoc(getPublicCollection('comments'), {
+                    mangaId: currentViewMangaId,
+                    chapterId: currentViewChapterId,
+                    userId: window.currentUserUID,
+                    userName: window.currentUserName,
+                    text: text,
+                    timestamp: Date.now()
+                });
+                input.value = "";
+                showToast("Comment posted!");
+            } catch (e) {
+                console.error(e);
+                showToast("Error posting comment.");
+            } finally {
+                input.disabled = false;
+            }
+        };
+
+        window.toggleLike = async function() {
+            if(!window.isLoggedIn) return showToast("Log in to like.");
+            
+            try {
+                if(currentViewMangaId === 'vimalamani') {
+                    const ref = getPublicDoc('stats', 'vimalamani_ch1');
+                    const likes = window.appState.globalStats.likes;
+                    const dislikes = window.appState.globalStats.dislikes;
+                    
+                    let newLikes = [...likes];
+                    let newDislikes = dislikes.filter(id => id !== window.currentUserUID);
+                    
+                    if(newLikes.includes(window.currentUserUID)) newLikes = newLikes.filter(id => id !== window.currentUserUID);
+                    else newLikes.push(window.currentUserUID);
+
+                    await updateDoc(ref, { likes: newLikes, dislikes: newDislikes });
+                } else {
+                    // Update specific manga chapter
+                    const ref = getPublicDoc('mangas', currentViewMangaId);
+                    const manga = window.appState.mangas.find(m => m.id === currentViewMangaId);
+                    if(!manga) return;
+                    
+                    const chapters = [...manga.chapters];
+                    const chIdx = chapters.findIndex(c => c.id === currentViewChapterId);
+                    if(chIdx > -1) {
+                        let l = chapters[chIdx].likes;
+                        let d = chapters[chIdx].dislikes.filter(id => id !== window.currentUserUID);
+                        if(l.includes(window.currentUserUID)) l = l.filter(id => id !== window.currentUserUID);
+                        else l.push(window.currentUserUID);
+                        
+                        chapters[chIdx].likes = l;
+                        chapters[chIdx].dislikes = d;
+                        await updateDoc(ref, { chapters: chapters });
+                    }
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        window.toggleDislike = async function() {
+            if(!window.isLoggedIn) return showToast("Log in to dislike.");
+            
+            try {
+                if(currentViewMangaId === 'vimalamani') {
+                    const ref = getPublicDoc('stats', 'vimalamani_ch1');
+                    const likes = window.appState.globalStats.likes;
+                    const dislikes = window.appState.globalStats.dislikes;
+                    
+                    let newDislikes = [...dislikes];
+                    let newLikes = likes.filter(id => id !== window.currentUserUID);
+                    
+                    if(newDislikes.includes(window.currentUserUID)) newDislikes = newDislikes.filter(id => id !== window.currentUserUID);
+                    else newDislikes.push(window.currentUserUID);
+
+                    await updateDoc(ref, { likes: newLikes, dislikes: newDislikes });
+                } else {
+                    const ref = getPublicDoc('mangas', currentViewMangaId);
+                    const manga = window.appState.mangas.find(m => m.id === currentViewMangaId);
+                    if(!manga) return;
+                    
+                    const chapters = [...manga.chapters];
+                    const chIdx = chapters.findIndex(c => c.id === currentViewChapterId);
+                    if(chIdx > -1) {
+                        let d = chapters[chIdx].dislikes;
+                        let l = chapters[chIdx].likes.filter(id => id !== window.currentUserUID);
+                        if(d.includes(window.currentUserUID)) d = d.filter(id => id !== window.currentUserUID);
+                        else d.push(window.currentUserUID);
+                        
+                        chapters[chIdx].likes = l;
+                        chapters[chIdx].dislikes = d;
+                        await updateDoc(ref, { chapters: chapters });
+                    }
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        window.createNewManga = async function() {
+            const title = document.getElementById('studio-title').value.trim();
+            const desc = document.getElementById('studio-desc').value.trim();
+            const tags = document.getElementById('studio-tags').value.trim();
+            const groupId = document.getElementById('studio-group-select').value;
+            const fileInput = document.getElementById('studio-cover');
+
+            if(!title) return alert("Title is required");
+
+            const overlay = document.getElementById('upload-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            document.getElementById('upload-status').innerText = 'Uploading...';
+
+            try {
+                let coverData = null;
+                if(fileInput.files && fileInput.files[0]) {
+                    // Compress cover to save space
+                    coverData = await compressImage(fileInput.files[0], 600, 0.8);
+                }
+
+                await addDoc(getPublicCollection('mangas'), {
+                    title, desc, tags,
+                    groupId: groupId || null,
+                    authorId: window.currentUserUID,
+                    status: 'pending',
+                    cover: coverData,
+                    chapters: [],
+                    createdAt: Date.now()
+                });
+                
+                showToast("Manga submitted for approval!");
+                document.getElementById('studio-title').value = '';
+                document.getElementById('studio-desc').value = '';
+                document.getElementById('studio-tags').value = '';
+                fileInput.value = '';
+            } catch(e) {
+                console.error(e);
+                alert("Upload failed. Image might be too large.");
+            } finally {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+        };
+
+        window.addChapterUI = function(mangaId) {
+            const title = prompt("Enter Chapter Title (e.g. Chapter 1):");
+            if(!title) return;
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                if(files.length === 0) return;
+                
+                showToast("Processing pages... please wait.");
+                const pagesData = [];
+                
+                try {
+                    // Process and compress all pages
+                    for(let i=0; i<files.length; i++) {
+                        const b64 = await compressImage(files[i], 1000, 0.7); // Compress aggressively
+                        pagesData.push(b64);
+                    }
+
+                    const ref = getPublicDoc('mangas', mangaId);
+                    const manga = window.appState.mangas.find(m => m.id === mangaId);
+                    if(manga) {
+                        const updatedChapters = [...manga.chapters];
+                        updatedChapters.push({
+                            id: 'ch_' + Date.now(),
+                            title: title,
+                            pages: pagesData,
+                            views: 0, likes: [], dislikes: []
+                        });
+                        
+                        await updateDoc(ref, { chapters: updatedChapters });
+                        showToast(`Chapter added with ${files.length} pages!`);
+                    }
+                } catch(err) {
+                    console.error(err);
+                    alert("Error saving chapter. File size might exceed limits.");
+                }
+            };
+            alert("Select the image files for your pages. Select multiple by holding Ctrl/Cmd. Max total size ~800KB.");
+            input.click();
+        };
+
+        window.createGroup = async function() {
+            const name = document.getElementById('studio-group-name').value.trim();
+            if(!name) return alert("Enter a group name");
+            try {
+                await addDoc(getPublicCollection('groups'), {
+                    name: name,
+                    ownerId: window.currentUserUID,
+                    members: [{ uid: window.currentUserUID, role: 'Owner' }]
+                });
+                document.getElementById('studio-group-name').value = '';
+                showToast("Group Created!");
+            } catch(e) { console.error(e); }
+        };
+
+        // --- SHARE FEATURE ---
+        window.shareChapter = function() {
+            // Generates a mock deep link based on current view
+            const url = new URL(window.location.href);
+            url.searchParams.set('manga', currentViewMangaId);
+            url.searchParams.set('chapter', currentViewChapterId);
+            const link = url.toString();
+
+            try {
+                document.execCommand('copy'); // Fallback trigger
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast("Link copied to clipboard!");
+                }).catch(() => {
+                    prompt("Copy this link to share:", link);
+                });
+            } catch (err) {
+                prompt("Copy this link to share:", link);
+            }
+        };
+
+        // --- UI RENDERERS ---
+        function updateUI() {
+            const state = window.appState;
+            
+            // Header
+            if (window.isLoggedIn) {
                 document.getElementById('nav-auth-btn').classList.add('hidden');
                 document.getElementById('nav-profile-btn').classList.remove('hidden');
-                document.getElementById('header-username').innerText = currentUserName;
+                document.getElementById('header-username').innerText = window.currentUserName;
+                document.getElementById('header-avatar').src = window.currentUserAvatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${window.currentUserName.charAt(0).toUpperCase()}`;
                 
-                const defaultAvatar = `https://placehold.co/100x100/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
-                document.getElementById('header-avatar').src = currentUserAvatar || defaultAvatar;
-
-                // Show/hide creator studio nav
-                if (currentUserRole === 'creator') {
+                if (window.currentUserRole === 'creator') {
                     document.getElementById('nav-studio').classList.remove('hidden');
                 } else {
                     document.getElementById('nav-studio').classList.add('hidden');
@@ -748,497 +1238,189 @@ function toggleFounder(el) {
                 document.getElementById('nav-studio').classList.add('hidden');
             }
 
-            // Update Vimalamani Static Stats (Admin Project)
-            document.getElementById('global-read-count').innerText = db.ch1.views.toLocaleString();
+            // Stats
+            document.getElementById('global-read-count').innerText = state.globalStats.views.toLocaleString();
             
+            // Update Comments List specifically
+            const userMap = {};
+            state.users.forEach(u => userMap[u.uid] = u);
+            renderComments(userMap);
+
+            // Update complex tabs
+            if(document.getElementById('community').classList.contains('active')) renderCommunityTab(userMap);
+            if(document.getElementById('studio').classList.contains('active')) renderCreatorStudio();
+            if(document.getElementById('admin').classList.contains('active')) renderAdmin(userMap);
+            if(document.getElementById('profile').classList.contains('active')) renderProfileAdditions(userMap);
+        }
+
+        function renderComments(userMap) {
+            const list = document.getElementById('comment-list');
+            if(!list) return;
+            
+            list.innerHTML = "";
+            let count = 0;
+            const sortedComments = [...window.appState.comments].sort((a,b) => b.timestamp - a.timestamp);
+            
+            sortedComments.forEach(data => {
+                if(data.mangaId === currentViewMangaId && data.chapterId === currentViewChapterId) {
+                    count++;
+                    const dateStr = new Date(data.timestamp).toLocaleDateString();
+                    const author = userMap[data.userId] || { username: data.userName, avatar: null };
+                    const avatarSrc = author.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${author.username.charAt(0).toUpperCase()}`;
+
+                    const isFounder = author.username === "d_ART";
+                    const isAuthor = (currentViewMangaId !== 'vimalamani' && data.userId === window.appState.mangas.find(m=>m.id===currentViewMangaId)?.authorId);
+                    
+                    const badge = (isFounder || isAuthor) ? `
+                        <span onclick="this.classList.toggle('active')" class="tick-circle ml-1" title="${isFounder ? 'Founder' : 'Creator'}">
+                          <svg viewBox="0 0 24 24" width="16" height="16">
+                            <circle cx="12" cy="12" r="10" class="circle-bg"></circle>
+                            <path d="M8.5 12.5l2 2 5-5" fill="none" class="tick-path"/>
+                          </svg>
+                        </span>` : "";
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)] animate-[fadeIn_0.5s_ease] flex gap-4">
+                            <img src="${avatarSrc}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-700 flex-shrink-0">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-2">
+                                    <p class="font-bold text-white uppercase text-sm tracking-wider flex items-center">
+                                        ${author.username} ${badge}
+                                    </p>
+                                    <span class="text-xs text-gray-500 font-bold">${dateStr}</span>
+                                </div>
+                                <p class="text-gray-300 text-sm leading-relaxed">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+            
+            if(count === 0) list.innerHTML = `<p class="text-gray-500 italic text-center">Be the first to comment.</p>`;
+            document.getElementById('comment-total').innerText = count;
+        }
+
+        function updateReaderUI() {
             if (currentViewMangaId === 'vimalamani') {
-                document.getElementById('like-count').innerText = db.ch1.likes.length.toLocaleString();
-                document.getElementById('dislike-count').innerText = db.ch1.dislikes.length.toLocaleString();
-                document.getElementById('btn-like').style.color = db.ch1.likes.includes(currentUserUID) ? "var(--dlas-red)" : "";
-                document.getElementById('btn-dislike').style.color = db.ch1.dislikes.includes(currentUserUID) ? "white" : "";
+                const stats = window.appState.globalStats;
+                document.getElementById('like-count').innerText = stats.likes.length.toLocaleString();
+                document.getElementById('dislike-count').innerText = stats.dislikes.length.toLocaleString();
+                document.getElementById('btn-like').style.color = stats.likes.includes(window.currentUserUID) ? "var(--dlas-red)" : "";
+                document.getElementById('btn-dislike').style.color = stats.dislikes.includes(window.currentUserUID) ? "white" : "";
             } else {
-                // Update Community Manga Reader stats
-                const m = db.mangas.find(m => m.id === currentViewMangaId);
+                const m = window.appState.mangas.find(x => x.id === currentViewMangaId);
                 if(m) {
-                    const c = m.chapters.find(ch => ch.id === currentViewChapterId);
+                    const c = m.chapters.find(x => x.id === currentViewChapterId);
                     if(c) {
                         document.getElementById('like-count').innerText = c.likes.length.toLocaleString();
                         document.getElementById('dislike-count').innerText = c.dislikes.length.toLocaleString();
-                        document.getElementById('btn-like').style.color = c.likes.includes(currentUserUID) ? "var(--dlas-red)" : "";
-                        document.getElementById('btn-dislike').style.color = c.dislikes.includes(currentUserUID) ? "white" : "";
+                        document.getElementById('btn-like').style.color = c.likes.includes(window.currentUserUID) ? "var(--dlas-red)" : "";
+                        document.getElementById('btn-dislike').style.color = c.dislikes.includes(window.currentUserUID) ? "white" : "";
                     }
                 }
             }
-
-            // Update Comments mapped to the current context
-            const userMap = {};
-            db.users.forEach(u => userMap[u.uid] = u);
-
-            const list = document.getElementById('comment-list');
-            list.innerHTML = "";
-            let count = 0;
-            const sortedComments = [...db.comments].sort((a,b) => b.timestamp - a.timestamp);
-            
-            sortedComments.forEach(data => {
-                // Only show comments for the currently viewed chapter (vimalamani OR community)
-                if(data.mangaId === currentViewMangaId && data.chapterId === currentViewChapterId) {
-                    count++;
-                    const dateStr = new Date(data.timestamp).toLocaleDateString();
-                    const author = userMap[data.userId] || { username: data.userName, avatar: null };
-                    const avatarSrc = author.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${author.username.charAt(0).toUpperCase()}`;
-
-                    const commentHTML = `
-                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)] animate-[fadeIn_0.5s_ease] flex gap-4">
-                            <img src="${avatarSrc}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-700 flex-shrink-0">
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start mb-2">
-                                    <p class="font-bold text-white uppercase text-sm tracking-wider flex items-center gap-1">
-                                    ${author.username}
-                                    ${author.username === "d_ART" ? `
-<span onclick="toggleFounder(this)" class="tick-circle">
-  <svg viewBox="0 0 24 24" width="18" height="18">
-    <circle cx="12" cy="12" r="10" class="circle-bg"></circle>
-    <path d="M8.5 12.5l2 2 5-5" fill="none" class="tick-path"/>
-  </svg>
-</span>                                  ` : ""}
-                                    </p>
-                                    <span class="text-xs text-gray-500 font-bold">${dateStr}</span>
-                                </div>
-                                <p class="text-gray-300 text-sm leading-relaxed">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-                            </div>
-                        </div>
-                    `;
-                    list.insertAdjacentHTML('beforeend', commentHTML);
-                }
-                // for cretors
-                if(data.mangaId === currentViewMangaId && data.chapterId === currentViewChapterId) {
-                    count++;
-                    const dateStr = new Date(data.timestamp).toLocaleDateString();
-                    const author = userMap[data.userId] || { username: data.userName, avatar: null };
-                    const avatarSrc = author.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${author.username.charAt(0).toUpperCase()}`;
-
-                    const commentHTML = `
-                        <div class="bg-[#1a1a1a] p-4 border-l-4 border-[var(--dlas-red)] animate-[fadeIn_0.5s_ease] flex gap-4">
-                            <img src="${avatarSrc}" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-700 flex-shrink-0">
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start mb-2">
-                                    <p class="font-bold text-white uppercase text-sm tracking-wider flex items-center gap-1">
-                                    ${author.username}
-                                    ${author.username === "d_ART" || (currentViewMangaId !== 'vimalamani' && data.userId === db.mangas.find(m=>m.id===currentViewMangaId)?.authorId) ? `
-<span onclick="togglecreator(this)" class="tick-circle">
-  <svg viewBox="0 0 24 24" width="18" height="18">
-    <circle cx="12" cy="12" r="10" class="circle-bg"></circle>
-    <path d="M8.5 12.5l2 2 5-5" fill="none" class="tick-path"/>
-  </svg>
-</span>                                  ` : ""}
-                                    </p>
-                                    <span class="text-xs text-gray-500 font-bold">${dateStr}</span>
-                                </div>
-                                <p class="text-gray-300 text-sm leading-relaxed">${data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-                            </div>
-                        </div>
-                    `;
-                    list.insertAdjacentHTML('beforeend', commentHTML);
-                }
-
-            });
-            document.getElementById('comment-total').innerText = count;
-
-            // Dev Panel Specific Updates
-            document.getElementById('dev-stat-reads').innerText = db.ch1.views.toLocaleString();
-            document.getElementById('dev-stat-likes').innerText = db.ch1.likes.length.toLocaleString();
-            document.getElementById('dev-stat-dislikes').innerText = db.ch1.dislikes.length.toLocaleString();
-
-            const userList = document.getElementById('dev-user-list');
-            userList.innerHTML = "";
-            document.getElementById('dev-total-users').innerText = db.users.length;
-            
-            db.users.forEach(u => {
-                const d = new Date(u.joinedAt).toLocaleDateString();
-                const aSrc = u.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${u.username.charAt(0).toUpperCase()}`;
-                userList.insertAdjacentHTML('beforeend', `
-                    <div class="flex justify-between items-center bg-[#1a1a1a] p-3 border border-gray-800">
-                        <div class="flex items-center gap-3">
-                            <img src="${aSrc}" class="w-8 h-8 rounded-full object-cover border border-gray-700">
-                            <div>
-                                <p class="text-white font-bold text-sm uppercase">${u.username} <span class="text-[9px] bg-gray-700 px-1 rounded ml-1">${u.role || 'reader'}</span></p>
-                                <p class="text-xs text-gray-500 font-mono">${u.uid}</p>
-                            </div>
-                        </div>
-                        <span class="text-[var(--dlas-red)] text-xs font-bold uppercase">Joined ${d}</span>
-                    </div>
-                `);
-            });
-
-            // Render New Features
-            renderCommunityTab(db, userMap);
-            renderCreatorStudio(db);
-            renderAdminApprovals(db);
-            renderProfileAdditions(db, userMap);
-        };
-
-        // --- Authentication Functions ---
-        function resetAuthModal() {
-            authMode = 'login';
-            document.getElementById('auth-title').innerText = 'LOGIN';
-            document.getElementById('auth-subtitle').innerText = 'Access your account to read chapters and drop comments.';
-            document.getElementById('auth-submit-btn').innerText = 'LOGIN';
-            document.getElementById('auth-toggle-btn').innerText = "Don't have an account? Sign Up";
-            document.getElementById('auth-error').classList.add('hidden');
-            document.getElementById('auth-role-group').classList.add('hidden');
-            document.getElementById('auth-username').value = '';
-            document.getElementById('auth-password').value = '';
         }
 
-        window.toggleAuthMode = function() {
-            authMode = authMode === 'login' ? 'signup' : 'login';
-            document.getElementById('auth-title').innerText = authMode === 'login' ? 'LOGIN' : 'SIGN UP';
-            document.getElementById('auth-subtitle').innerText = authMode === 'login' 
-                ? 'Access your account to read chapters and drop comments.' 
-                : 'Create a profile to read chapters, upload your own, and save progress.';
-            document.getElementById('auth-submit-btn').innerText = authMode === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
-            document.getElementById('auth-toggle-btn').innerText = authMode === 'login' 
-                ? "Don't have an account? Sign Up" 
-                : "Already have an account? Login";
-            document.getElementById('auth-error').classList.add('hidden');
-            
-            if (authMode === 'signup') {
-                document.getElementById('auth-role-group').classList.remove('hidden');
-            } else {
-                document.getElementById('auth-role-group').classList.add('hidden');
-            }
-        };
-
-        window.showAuthError = function(msg) {
-            const errDiv = document.getElementById('auth-error');
-            errDiv.innerText = msg;
-            errDiv.classList.remove('hidden');
-        };
-
-        window.toggleAuth = function() {
-            resetAuthModal();
-            document.getElementById('auth-modal').classList.add('active');
-        };
-
-        window.closeAuthModal = function() {
-            document.getElementById('auth-modal').classList.remove('active');
-        };
-
-        window.logoutUser = function(silent = false) {
-            isLoggedIn = false;
-            currentUserUID = null;
-            currentUserName = "Guest";
-            currentUserAvatar = null;
-            currentUserRole = "reader";
-            localStorage.removeItem('vima_active_user');
-            updateUI();
-            
-            if(['reader', 'profile', 'studio', 'admin'].some(c => document.getElementById(c).classList.contains('active'))) { 
-                window.openTab('home'); 
-            }
-            if(!silent) showToast("Successfully logged out!");
-        };
-
-        window.submitAuth = function() {
-            const usernameInput = document.getElementById('auth-username').value.trim();
-            const passwordInput = document.getElementById('auth-password').value.trim();
-            
-            if (!usernameInput || !passwordInput) {
-                showAuthError("Please enter both a username and password.");
-                return;
-            }
-
-            if (authMode === 'signup' && passwordInput.length < 8) {
-                showAuthError("Password must be at least 8 characters long.");
-                return;
-            }
-
-            const db = loadDB();
-            const existingUser = db.users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
-
-            if (authMode === 'signup') {
-                if (existingUser) {
-                    showAuthError("That username is already taken. Please choose another.");
-                    return;
-                }
-                
-                currentUserUID = "user_" + Date.now();
-                currentUserName = usernameInput;
-                currentUserAvatar = null;
-                currentUserRole = document.querySelector('input[name="auth-role"]:checked').value;
-
-                db.users.push({ 
-                    uid: currentUserUID, 
-                    username: currentUserName, 
-                    password: passwordInput,
-                    avatar: currentUserAvatar,
-                    role: currentUserRole,
-                    joinedAt: Date.now() 
-                });
-                pushNotification(db, currentUserUID, `Welcome to Vimalamani Hub, ${currentUserName}!`);
-                saveDB(db);
-                showToast("Account created successfully!");
-
-            } else {
-                if (!existingUser) {
-                    showAuthError("Username not found. Have you signed up yet?");
-                    return;
-                }
-                if (existingUser.password !== passwordInput) {
-                    showAuthError("Incorrect password. Please try again.");
-                    return;
-                }
-                
-                currentUserUID = existingUser.uid;
-                currentUserName = existingUser.username;
-                currentUserAvatar = existingUser.avatar || null;
-                currentUserRole = existingUser.role || 'reader'; // backward compatibility
-                showToast("Successfully logged in!");
-            }
-
-            isLoggedIn = true;
-            localStorage.setItem('vima_active_user', currentUserUID); 
-            closeAuthModal();
-            updateUI(db);
-
-            document.getElementById('profile-username').value = currentUserName;
-            document.getElementById('profile-current-password').value = "";
-            document.getElementById('profile-new-password').value = "";
-            document.getElementById('profile-role-badge').innerText = currentUserRole;
-            const defAvatar = `https://placehold.co/150x150/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
-            document.getElementById('profile-avatar-preview').src = currentUserAvatar || defAvatar;
-
-            if (window.pendingRead) { 
-                window.openTab('reader'); 
-                window.pendingRead = false; 
-            }
-        };
-
-        window.checkPersistentLogin = function() {
-            const savedUID = localStorage.getItem('vima_active_user');
-            if (savedUID) {
-                const db = loadDB();
-                const existingUser = db.users.find(u => u.uid === savedUID);
-                if (existingUser) {
-                    isLoggedIn = true;
-                    currentUserUID = existingUser.uid;
-                    currentUserName = existingUser.username;
-                    currentUserAvatar = existingUser.avatar || null;
-                    currentUserRole = existingUser.role || 'reader';
-                    
-                    document.getElementById('profile-username').value = currentUserName;
-                    document.getElementById('profile-role-badge').innerText = currentUserRole;
-                    const defAvatar = `https://placehold.co/150x150/1a1a1a/ffffff?text=${currentUserName.charAt(0).toUpperCase()}`;
-                    document.getElementById('profile-avatar-preview').src = currentUserAvatar || defAvatar;
-                } else {
-                    localStorage.removeItem('vima_active_user');
-                }
-            }
-        };
-
-        // --- Profile Management ---
-        window.handleAvatarUpload = function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('profile-avatar-preview').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.saveProfile = function() {
-            const newUsername = document.getElementById('profile-username').value.trim();
-            const currentPasswordInput = document.getElementById('profile-current-password').value;
-            const newPasswordInput = document.getElementById('profile-new-password').value;
-            const newAvatarData = document.getElementById('profile-avatar-preview').src;
-
-            if (!newUsername) return alert("Username cannot be empty.");
-
-            const db = loadDB();
-            const userIndex = db.users.findIndex(u => u.uid === currentUserUID);
-            if (userIndex === -1) return;
-
-            const userInDB = db.users[userIndex];
-
-            if (newPasswordInput || currentPasswordInput) {
-                if (userInDB.password !== currentPasswordInput) return alert("Incorrect Current Password.");
-                if (newPasswordInput.length < 8) return alert("Your New Password must be at least 8 characters long.");
-                userInDB.password = newPasswordInput;
-            }
-
-            if (newUsername.toLowerCase() !== currentUserName.toLowerCase()) {
-                const taken = db.users.find(u => u.username.toLowerCase() === newUsername.toLowerCase() && u.uid !== currentUserUID);
-                if (taken) return alert("That username is already taken.");
-            }
-
-            userInDB.username = newUsername;
-            currentUserName = newUsername;
-            
-            if (!newAvatarData.includes('placehold.co')) {
-                userInDB.avatar = newAvatarData;
-                currentUserAvatar = newAvatarData;
-            }
-            
-            saveDB(db);
-            document.getElementById('profile-current-password').value = "";
-            document.getElementById('profile-new-password').value = "";
-            showToast("Profile successfully updated!");
-        };
-
-        // --- DYNAMIC READER SYSTEM ---
-
-        window.attemptRead = function(mangaId, chapterId) {
-            if (!isLoggedIn) {
-                window.pendingRead = true;
-                currentViewMangaId = mangaId;
-                currentViewChapterId = chapterId;
-                toggleAuth();
-                return;
-            }
-
-            const db = loadDB();
+        // --- NAV & LAUNCHERS ---
+        window.attemptRead = async function(mangaId, chapterId) {
             currentViewMangaId = mangaId;
             currentViewChapterId = chapterId;
+            
+            if (!window.isLoggedIn && mangaId !== 'vimalamani') {
+                window.pendingRead = true;
+                return toggleAuth();
+            }
 
             const readerContainer = document.getElementById('reader-pages');
             const titleEl = document.getElementById('reader-title');
             const backBtn = document.getElementById('reader-back-btn');
-            readerContainer.innerHTML = '';
+            readerContainer.innerHTML = '<div class="loader m-20"></div>';
 
-            if (mangaId === 'vimalamani') {
-                db.ch1.views += 1;
-                titleEl.innerText = "CH 1: THE TIGER";
-                readerContainer.innerHTML = `
-                    <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+1" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
-                    <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+2" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
-                `;
-                backBtn.onclick = () => openTab('manga');
-            } else {
-                // Community Manga
-                const manga = db.mangas.find(m => m.id === mangaId);
-                if (!manga) return showToast("Manga not found");
-                const chapter = manga.chapters.find(c => c.id === chapterId);
-                if (!chapter) return showToast("Chapter not found");
-
-                chapter.views += 1;
-                titleEl.innerText = `${manga.title} - ${chapter.title}`;
-                backBtn.onclick = () => viewMangaDetail(mangaId);
-
-                if(chapter.pages && chapter.pages.length > 0) {
-                    chapter.pages.forEach((pageStr, idx) => {
-                        readerContainer.insertAdjacentHTML('beforeend', `<img src="${pageStr}" alt="Page ${idx+1}" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">`);
-                    });
+            try {
+                if (mangaId === 'vimalamani') {
+                    // Update stats
+                    await updateDoc(getPublicDoc('stats', 'vimalamani_ch1'), { views: window.appState.globalStats.views + 1 });
+                    
+                    titleEl.innerText = "CH 1: THE TIGER";
+                    readerContainer.innerHTML = `
+                        <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+1" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
+                        <img src="https://placehold.co/800x1200/1a1a1a/555555?text=YOUR+MANGA+PAGE+2" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">
+                    `;
+                    backBtn.onclick = () => openTab('manga');
                 } else {
-                    readerContainer.innerHTML = `<p class="text-white py-20">Creator hasn't uploaded pages yet.</p>`;
+                    const manga = window.appState.mangas.find(m => m.id === mangaId);
+                    if (!manga) throw new Error("Manga not found");
+                    const chapter = manga.chapters.find(c => c.id === chapterId);
+                    if (!chapter) throw new Error("Chapter not found");
+
+                    // Increase View count in firestore
+                    const updatedChapters = [...manga.chapters];
+                    const idx = updatedChapters.findIndex(c => c.id === chapterId);
+                    updatedChapters[idx].views += 1;
+                    await updateDoc(getPublicDoc('mangas', mangaId), { chapters: updatedChapters });
+
+                    titleEl.innerText = `${manga.title} - ${chapter.title}`;
+                    backBtn.onclick = () => viewMangaDetail(mangaId);
+
+                    readerContainer.innerHTML = '';
+                    if(chapter.pages && chapter.pages.length > 0) {
+                        chapter.pages.forEach((pageStr, i) => {
+                            readerContainer.insertAdjacentHTML('beforeend', `<img src="${pageStr}" alt="Page ${i+1}" class="w-full max-w-[800px] h-auto shadow-2xl border border-gray-800">`);
+                        });
+                    } else {
+                        readerContainer.innerHTML = `<p class="text-white py-20">No pages uploaded.</p>`;
+                    }
                 }
+            } catch(e) {
+                console.error(e);
+                readerContainer.innerHTML = `<p class="text-red-500 py-20">Failed to load chapter.</p>`;
             }
             
-            saveDB(db);
+            updateUI(); // Refresh comments and likes
+            updateReaderUI();
             openTab('reader');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        window.toggleLike = function() {
-            if(!isLoggedIn) { alert("Please log in to like."); return; }
-            const db = loadDB();
-            
-            if(currentViewMangaId === 'vimalamani') {
-                if(db.ch1.likes.includes(currentUserUID)) db.ch1.likes = db.ch1.likes.filter(id => id !== currentUserUID);
-                else { db.ch1.likes.push(currentUserUID); db.ch1.dislikes = db.ch1.dislikes.filter(id => id !== currentUserUID); }
-            } else {
-                const chapter = db.mangas.find(m=>m.id===currentViewMangaId)?.chapters.find(c=>c.id===currentViewChapterId);
-                if(chapter) {
-                    if(chapter.likes.includes(currentUserUID)) chapter.likes = chapter.likes.filter(id => id !== currentUserUID);
-                    else { chapter.likes.push(currentUserUID); chapter.dislikes = chapter.dislikes.filter(id => id !== currentUserUID); }
-                }
-            }
-            saveDB(db);
-        };
-
-        window.toggleDislike = function() {
-            if(!isLoggedIn) { alert("Please log in to dislike."); return; }
-            const db = loadDB();
-
-            if(currentViewMangaId === 'vimalamani') {
-                if(db.ch1.dislikes.includes(currentUserUID)) db.ch1.dislikes = db.ch1.dislikes.filter(id => id !== currentUserUID);
-                else { db.ch1.dislikes.push(currentUserUID); db.ch1.likes = db.ch1.likes.filter(id => id !== currentUserUID); showToast("Thanks for the feedback."); }
-            } else {
-                const chapter = db.mangas.find(m=>m.id===currentViewMangaId)?.chapters.find(c=>c.id===currentViewChapterId);
-                if(chapter) {
-                    if(chapter.dislikes.includes(currentUserUID)) chapter.dislikes = chapter.dislikes.filter(id => id !== currentUserUID);
-                    else { chapter.dislikes.push(currentUserUID); chapter.likes = chapter.likes.filter(id => id !== currentUserUID); }
-                }
-            }
-            saveDB(db);
-        };
-
-        window.postComment = function() {
-            if(!isLoggedIn) {
-                toggleAuth();
-                return;
-            }
-            const input = document.getElementById('comment-input');
-            const text = input.value.trim();
-            if (text === "") return;
-
-            const db = loadDB();
-            db.comments.push({
-                mangaId: currentViewMangaId,
-                chapterId: currentViewChapterId,
-                userId: currentUserUID,
-                userName: currentUserName,
-                text: text,
-                timestamp: Date.now()
-            });
-            saveDB(db);
-            input.value = "";
-            showToast("Comment posted!");
-        };
-
-        // --- NEW FEATURES LOGIC (COMMUNITY, STUDIO, ADMIN) ---
-
-        // View single Manga Detail (List of chapters)
         window.viewMangaDetail = function(mangaId) {
-            const db = loadDB();
-            const manga = db.mangas.find(m => m.id === mangaId);
+            const manga = window.appState.mangas.find(m => m.id === mangaId);
             if(!manga) return;
 
-            const author = db.users.find(u => u.uid === manga.authorId);
-            const group = manga.groupId ? db.groups.find(g => g.id === manga.groupId) : null;
+            const userMap = {};
+            window.appState.users.forEach(u => userMap[u.uid] = u);
+            const author = userMap[manga.authorId];
+            const group = manga.groupId ? window.appState.groups.find(g => g.id === manga.groupId) : null;
             const container = document.getElementById('manga-detail-container');
             
-            // Check if viewer can request collab
-            const isCreatorWithProject = isLoggedIn && db.mangas.some(m => m.authorId === currentUserUID && m.status === 'approved');
-            const collabBtn = (isCreatorWithProject && manga.authorId !== currentUserUID && !group) 
+            const isCreatorWithProject = window.isLoggedIn && window.appState.mangas.some(m => m.authorId === window.currentUserUID && m.status === 'approved');
+            const collabBtn = (isCreatorWithProject && manga.authorId !== window.currentUserUID && !group) 
                 ? `<button onclick="requestCollab('${manga.authorId}', '${manga.title}')" class="mt-4 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors">Request Collaboration</button>` 
                 : '';
 
-            let chaptersHtml = manga.chapters.length === 0 ? `<p class="text-gray-500">No chapters uploaded yet.</p>` : '';
+            let chaptersHtml = manga.chapters.length === 0 ? `<p class="text-gray-500">No chapters yet.</p>` : '';
             manga.chapters.forEach(ch => {
                 chaptersHtml += `
-                    <div class="bg-[#1a1a1a] p-4 flex justify-between items-center border border-gray-800 hover:border-blue-500 transition-colors">
+                    <div class="bg-[#1a1a1a] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border border-gray-800 hover:border-blue-500 transition-colors gap-4">
                         <span class="text-white font-bold">${ch.title}</span>
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto">
                             <span class="text-xs text-gray-500 font-bold">${ch.views} Reads</span>
-                            <button onclick="attemptRead('${manga.id}', '${ch.id}')" class="bg-[var(--dlas-red)] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Read</button>
+                            <button onclick="attemptRead('${manga.id}', '${ch.id}')" class="flex-1 sm:flex-none bg-[var(--dlas-red)] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Read</button>
                         </div>
                     </div>
                 `;
             });
 
             container.innerHTML = `
-                <div class="flex gap-8 border-b border-gray-800 pb-8 mb-8">
-                    <img src="${manga.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-48 h-auto object-cover border border-gray-700">
-                    <div>
+                <div class="flex flex-col sm:flex-row gap-8 border-b border-gray-800 pb-8 mb-8">
+                    <img src="${manga.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-48 h-auto object-cover border border-gray-700 mx-auto sm:mx-0">
+                    <div class="text-center sm:text-left">
                         <h2 class="text-4xl heading-font text-white mb-2">${manga.title}</h2>
                         <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">By: ${group ? group.name + ' (Group)' : author?.username || 'Unknown'}</p>
-                        <p class="text-gray-300 text-sm leading-relaxed mb-4">${manga.desc || 'No description provided.'}</p>
-                        <div class="flex gap-2 flex-wrap mb-4">
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 text-left">${manga.desc || 'No description provided.'}</p>
+                        <div class="flex gap-2 flex-wrap mb-4 justify-center sm:justify-start">
                             ${(manga.tags||'').split(',').map(t => `<span class="bg-gray-800 text-gray-300 px-2 py-1 text-xs rounded">${t.trim()}</span>`).join('')}
                         </div>
                         ${collabBtn}
+                        <button onclick="shareChapterMock('${manga.id}')" class="mt-4 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ml-2">Share Page</button>
                     </div>
                 </div>
                 <h3 class="text-2xl heading-font text-white mb-4">Chapters</h3>
@@ -1252,23 +1434,34 @@ function toggleFounder(el) {
             openTab('manga-detail');
         };
 
-        const renderCommunityTab = (db, userMap) => {
+        window.shareChapterMock = function(mangaId) {
+            const link = new URL(window.location.href);
+            link.searchParams.set('manga', mangaId);
+            try {
+                navigator.clipboard.writeText(link.toString()).then(()=>showToast("Link copied!")).catch(()=>prompt("Copy this link:", link.toString()));
+            } catch(e) { prompt("Copy this link:", link.toString()); }
+        }
+
+        function renderCommunityTab(userMap) {
             const listSolo = document.getElementById('community-manga-list');
             const listGroup = document.getElementById('group-manga-list');
-            listSolo.innerHTML = '';
-            listGroup.innerHTML = '';
+            listSolo.innerHTML = ''; listGroup.innerHTML = '';
             
-            const approved = db.mangas.filter(m => m.status === 'approved');
+            const approved = window.appState.mangas.filter(m => m.status === 'approved');
             
             approved.forEach(m => {
                 const totalViews = m.chapters.reduce((sum, ch) => sum + ch.views, 0);
                 const html = `
-                    <div class="bg-[#111] border border-gray-800 hover:border-blue-500 transition-colors cursor-pointer group" onclick="viewMangaDetail('${m.id}')">
-                        <img src="${m.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-full h-64 object-cover border-b border-gray-800 opacity-80 group-hover:opacity-100 transition-opacity">
-                        <div class="p-4">
-                            <h4 class="text-white font-bold truncate">${m.title}</h4>
-                            <p class="text-xs text-gray-500 uppercase mt-1">By ${m.groupId ? db.groups.find(g=>g.id===m.groupId)?.name : userMap[m.authorId]?.username}</p>
-                            <p class="text-xs text-[var(--dlas-red)] font-bold mt-2">${totalViews} Total Reads</p>
+                    <div class="bg-[#111] border border-gray-800 hover:border-blue-500 transition-colors cursor-pointer group flex flex-col" onclick="viewMangaDetail('${m.id}')">
+                        <div class="w-full h-64 overflow-hidden border-b border-gray-800">
+                            <img src="${m.cover || 'https://placehold.co/400x600/1a1a1a/555555?text=No+Cover'}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-white font-bold truncate">${m.title}</h4>
+                                <p class="text-xs text-gray-500 uppercase mt-1">By ${m.groupId ? window.appState.groups.find(g=>g.id===m.groupId)?.name : userMap[m.authorId]?.username}</p>
+                            </div>
+                            <p class="text-xs text-[var(--dlas-red)] font-bold mt-3">${totalViews} Reads</p>
                         </div>
                     </div>
                 `;
@@ -1278,22 +1471,23 @@ function toggleFounder(el) {
 
             if(listSolo.innerHTML==='') listSolo.innerHTML = '<p class="text-gray-500 italic col-span-4">No solo projects yet.</p>';
             if(listGroup.innerHTML==='') listGroup.innerHTML = '<p class="text-gray-500 italic col-span-4">No group projects yet.</p>';
-        };
+        }
 
-        const renderCreatorStudio = (db) => {
-            if(currentUserRole !== 'creator') return;
+        function renderCreatorStudio() {
+            if(window.currentUserRole !== 'creator') return;
+            const state = window.appState;
 
             // Group Select
             const gSelect = document.getElementById('studio-group-select');
             gSelect.innerHTML = '<option value="">Personal Project (No Group)</option>';
-            db.groups.filter(g => g.members.some(m => m.uid === currentUserUID)).forEach(g => {
+            state.groups.filter(g => g.members.some(m => m.uid === window.currentUserUID)).forEach(g => {
                 gSelect.insertAdjacentHTML('beforeend', `<option value="${g.id}">${g.name}</option>`);
             });
 
-            // My Groups List
+            // My Groups
             const myGroups = document.getElementById('studio-my-groups');
             myGroups.innerHTML = '';
-            const userGroups = db.groups.filter(g => g.members.some(m => m.uid === currentUserUID));
+            const userGroups = state.groups.filter(g => g.members.some(m => m.uid === window.currentUserUID));
             if(userGroups.length === 0) myGroups.innerHTML = '<p class="text-gray-600 text-xs italic">You are not in any groups.</p>';
             userGroups.forEach(g => {
                 myGroups.insertAdjacentHTML('beforeend', `
@@ -1304,10 +1498,10 @@ function toggleFounder(el) {
                 `);
             });
 
-            // My Projects List
+            // My Projects
             const myProjs = document.getElementById('studio-my-projects');
             myProjs.innerHTML = '';
-            const userMangas = db.mangas.filter(m => m.authorId === currentUserUID);
+            const userMangas = state.mangas.filter(m => m.authorId === window.currentUserUID);
             if(userMangas.length === 0) myProjs.innerHTML = '<p class="text-gray-500 italic">No projects yet.</p>';
             userMangas.forEach(m => {
                 const statusColor = m.status === 'approved' ? 'text-green-500' : (m.status === 'rejected' ? 'text-red-500' : 'text-yellow-500');
@@ -1318,155 +1512,90 @@ function toggleFounder(el) {
                             <p class="text-xs font-bold uppercase tracking-widest ${statusColor} mt-1">${m.status}</p>
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
-                            <button onclick="addChapterUI('${m.id}')" class="flex-1 bg-gray-800 hover:bg-white hover:text-black text-white px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors">+ Chapter</button>
+                            ${m.status === 'approved' ? `<button onclick="addChapterUI('${m.id}')" class="flex-1 bg-gray-800 hover:bg-white hover:text-black text-white px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors">+ Chapter</button>` : ''}
                             <button onclick="viewMangaDetail('${m.id}')" class="flex-1 bg-purple-600 hover:bg-white hover:text-black text-white px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors">View</button>
                         </div>
                     </div>
                 `);
             });
-        };
+        }
 
-        window.createGroup = function() {
-            const name = document.getElementById('studio-group-name').value.trim();
-            if(!name) return alert("Enter a group name");
-            const db = loadDB();
-            db.groups.push({
-                id: 'grp_' + Date.now(),
-                name: name,
-                ownerId: currentUserUID,
-                members: [{ uid: currentUserUID, role: 'Owner' }]
-            });
-            saveDB(db);
-            document.getElementById('studio-group-name').value = '';
-            showToast("Group Created!");
-        };
+        // --- DEV DASH & MISC ---
+        function renderAdmin(userMap) {
+            const state = window.appState;
+            document.getElementById('dev-stat-reads').innerText = state.globalStats.views.toLocaleString();
+            document.getElementById('dev-stat-likes').innerText = state.globalStats.likes.length.toLocaleString();
+            document.getElementById('dev-stat-dislikes').innerText = state.globalStats.dislikes.length.toLocaleString();
 
-        window.createNewManga = function() {
-            const title = document.getElementById('studio-title').value.trim();
-            const desc = document.getElementById('studio-desc').value.trim();
-            const tags = document.getElementById('studio-tags').value.trim();
-            const groupId = document.getElementById('studio-group-select').value;
-            const fileInput = document.getElementById('studio-cover');
-
-            if(!title) return alert("Title is required");
-
-            const processUpload = (coverData) => {
-                const db = loadDB();
-                db.mangas.push({
-                    id: 'manga_' + Date.now(),
-                    title, desc, tags,
-                    groupId: groupId || null,
-                    authorId: currentUserUID,
-                    status: 'pending',
-                    cover: coverData,
-                    chapters: [],
-                    createdAt: Date.now()
-                });
-                saveDB(db);
-                showToast("Manga submitted for approval!");
-                document.getElementById('studio-title').value = '';
-                document.getElementById('studio-desc').value = '';
-                document.getElementById('studio-tags').value = '';
-                fileInput.value = '';
-            };
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => processUpload(e.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                processUpload(null);
-            }
-        };
-
-        window.addChapterUI = function(mangaId) {
-            const title = prompt("Enter Chapter Title (e.g. Chapter 1: Beginnings):");
-            if(!title) return;
-            // Quick simulation of page upload. In real app, we'd open a file picker.
-            // Using a single placehold for demo simplicity to avoid quota limits if heavily used, 
-            // but we'll try to let them pick files if they want via a hidden input trick.
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = true;
-            input.accept = 'image/*';
-            input.onchange = (e) => {
-                const files = Array.from(e.target.files);
-                if(files.length === 0) return;
-                
-                const pagesData = [];
-                let loaded = 0;
-                files.forEach((file, i) => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        pagesData[i] = ev.target.result;
-                        loaded++;
-                        if(loaded === files.length) {
-                            const db = loadDB();
-                            const m = db.mangas.find(x => x.id === mangaId);
-                            if(m) {
-                                m.chapters.push({
-                                    id: 'ch_' + Date.now(),
-                                    title: title,
-                                    pages: pagesData,
-                                    views: 0, likes: [], dislikes: []
-                                });
-                                saveDB(db);
-                                showToast(`Chapter added with ${files.length} pages!`);
-                            }
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                });
-            };
-            alert("Select the image files for your pages. Select multiple by holding Ctrl/Cmd.");
-            input.click();
-        };
-
-        const renderAdminApprovals = (db) => {
-            const list = document.getElementById('dev-pending-mangas');
-            if(!list) return; // fail safe
-            list.innerHTML = '';
-            const pendings = db.mangas.filter(m => m.status === 'pending');
+            const userList = document.getElementById('dev-user-list');
+            userList.innerHTML = "";
+            document.getElementById('dev-total-users').innerText = state.users.length;
             
-            if(pendings.length === 0) {
-                list.innerHTML = '<p class="text-gray-500 italic">No mangas pending approval.</p>';
-                return;
-            }
-
-            pendings.forEach(m => {
-                const author = db.users.find(u=>u.uid===m.authorId)?.username || 'Unknown';
-                list.insertAdjacentHTML('beforeend', `
-                    <div class="bg-[#1a1a1a] p-4 border border-blue-900 flex justify-between items-center">
-                        <div>
-                            <h4 class="text-white font-bold">${m.title}</h4>
-                            <p class="text-xs text-gray-500 uppercase mt-1">By: ${author}</p>
+            state.users.forEach(u => {
+                const d = new Date(u.joinedAt).toLocaleDateString();
+                const aSrc = u.avatar || `https://placehold.co/100x100/1a1a1a/ffffff?text=${u.username.charAt(0).toUpperCase()}`;
+                userList.insertAdjacentHTML('beforeend', `
+                    <div class="flex justify-between items-center bg-[#1a1a1a] p-3 border border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <img src="${aSrc}" class="w-8 h-8 rounded-full object-cover border border-gray-700">
+                            <div>
+                                <p class="text-white font-bold text-sm uppercase">${u.username} <span class="text-[9px] bg-gray-700 px-1 rounded ml-1">${u.role || 'reader'}</span></p>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="adminApproveManga('${m.id}', true)" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1 text-xs font-bold uppercase transition-colors">Approve</button>
-                            <button onclick="adminApproveManga('${m.id}', false)" class="bg-red-700 hover:bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase transition-colors">Reject</button>
-                        </div>
+                        <span class="text-[var(--dlas-red)] text-[10px] font-bold uppercase">Joined ${d}</span>
                     </div>
                 `);
             });
+
+            // Approvals
+            const appList = document.getElementById('dev-pending-mangas');
+            appList.innerHTML = '';
+            const pendings = state.mangas.filter(m => m.status === 'pending');
+            
+            if(pendings.length === 0) {
+                appList.innerHTML = '<p class="text-gray-500 italic">No mangas pending approval.</p>';
+            } else {
+                pendings.forEach(m => {
+                    const author = userMap[m.authorId]?.username || 'Unknown';
+                    appList.insertAdjacentHTML('beforeend', `
+                        <div class="bg-[#1a1a1a] p-4 border border-blue-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h4 class="text-white font-bold">${m.title}</h4>
+                                <p class="text-xs text-gray-500 uppercase mt-1">By: ${author}</p>
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button onclick="adminApproveManga('${m.id}', true)" class="flex-1 sm:flex-none bg-green-700 hover:bg-green-600 text-white px-3 py-2 text-xs font-bold uppercase transition-colors">Approve</button>
+                                <button onclick="adminApproveManga('${m.id}', false)" class="flex-1 sm:flex-none bg-red-700 hover:bg-red-600 text-white px-3 py-2 text-xs font-bold uppercase transition-colors">Reject</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        window.adminApproveManga = async function(id, isApproved) {
+            try {
+                const status = isApproved ? 'approved' : 'rejected';
+                await updateDoc(getPublicDoc('mangas', id), { status: status });
+                
+                const m = window.appState.mangas.find(x=>x.id===id);
+                if(m) {
+                    await addDoc(collection(db, 'artifacts', appId, 'users', m.authorId, 'notifications'), {
+                        message: `Your manga "${m.title}" was ${status}.`, date: Date.now()
+                    });
+                }
+                showToast(`Manga ${status}!`);
+            } catch(e) { console.error(e); }
         };
 
-        window.adminApproveManga = function(id, isApproved) {
-            const db = loadDB();
-            const m = db.mangas.find(x => x.id === id);
-            if(!m) return;
-            m.status = isApproved ? 'approved' : 'rejected';
-            pushNotification(db, m.authorId, `Your manga "${m.title}" has been ${m.status}.`);
-            saveDB(db);
-            showToast(`Manga ${m.status}!`);
-        };
-
-        const renderProfileAdditions = (db, userMap) => {
+        function renderProfileAdditions(userMap) {
+            const state = window.appState;
             const notifList = document.getElementById('profile-notifications');
             if(notifList) {
                 notifList.innerHTML = '';
-                const myNotifs = db.notifications.filter(n => n.userId === currentUserUID).sort((a,b)=>b.date-a.date);
-                if(myNotifs.length === 0) notifList.innerHTML = '<p class="text-gray-500 text-sm italic">No new notifications.</p>';
-                myNotifs.forEach(n => {
+                const sorted = [...state.notifications].sort((a,b)=>b.date-a.date);
+                if(sorted.length === 0) notifList.innerHTML = '<p class="text-gray-500 text-sm italic">No new notifications.</p>';
+                sorted.forEach(n => {
                     notifList.insertAdjacentHTML('beforeend', `<div class="bg-[#1a1a1a] p-3 border-l-2 border-blue-500 text-gray-300 text-sm">${n.message}</div>`);
                 });
             }
@@ -1474,7 +1603,7 @@ function toggleFounder(el) {
             const collabList = document.getElementById('profile-collabs');
             if(collabList) {
                 collabList.innerHTML = '';
-                const myReqs = db.collabReqs.filter(r => r.targetId === currentUserUID && r.status === 'pending');
+                const myReqs = state.collabReqs.filter(r => r.targetId === window.currentUserUID && r.status === 'pending');
                 if(myReqs.length === 0) collabList.innerHTML = '<p class="text-gray-500 text-sm italic">No pending requests.</p>';
                 myReqs.forEach(r => {
                     const sender = userMap[r.senderId]?.username || 'Someone';
@@ -1489,67 +1618,133 @@ function toggleFounder(el) {
                     `);
                 });
             }
-        };
+        }
 
-        window.requestCollab = function(targetId, mangaTitle) {
-            const db = loadDB();
-            if(db.collabReqs.some(r => r.senderId === currentUserUID && r.targetId === targetId && r.status === 'pending')) {
+        window.requestCollab = async function(targetId, mangaTitle) {
+            if(window.appState.collabReqs.some(r => r.senderId === window.currentUserUID && r.targetId === targetId && r.status === 'pending')) {
                 return showToast("Request already sent.");
             }
-            db.collabReqs.push({
-                id: 'req_' + Date.now(),
-                senderId: currentUserUID,
-                targetId: targetId,
-                mangaTitle: mangaTitle,
-                status: 'pending',
-                date: Date.now()
-            });
-            pushNotification(db, targetId, `New Collab Request from ${currentUserName}! Check Profile.`);
-            saveDB(db);
-            showToast("Collaboration request sent!");
+            try {
+                await addDoc(getPublicCollection('collabReqs'), {
+                    senderId: window.currentUserUID,
+                    targetId: targetId,
+                    mangaTitle: mangaTitle,
+                    status: 'pending',
+                    date: Date.now()
+                });
+                
+                await addDoc(collection(db, 'artifacts', appId, 'users', targetId, 'notifications'), {
+                    message: `New Collab Request from ${window.currentUserName}!`, date: Date.now()
+                });
+                showToast("Collaboration request sent!");
+            } catch(e) { console.error(e); }
         };
 
-        window.resolveCollab = function(reqId, status) {
-            const db = loadDB();
-            const req = db.collabReqs.find(r => r.id === reqId);
-            if(req) {
-                req.status = status;
-                pushNotification(db, req.senderId, `${currentUserName} has ${status} your collab request.`);
-                saveDB(db);
+        window.resolveCollab = async function(reqId, status) {
+            try {
+                await updateDoc(getPublicDoc('collabReqs', reqId), { status: status });
+                const req = window.appState.collabReqs.find(r => r.id === reqId);
+                if(req) {
+                     await addDoc(collection(db, 'artifacts', appId, 'users', req.senderId, 'notifications'), {
+                        message: `${window.currentUserName} has ${status} your collab request.`, date: Date.now()
+                    });
+                }
                 showToast(`Request ${status}.`);
-            }
+            } catch(e) { console.error(e); }
         };
 
-        // --- Navigation ---
+        // Standard Utility Functions mapped to window
         window.openTab = function(tabId) {
-            const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(pane => pane.classList.remove('active'));
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => link.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            const el = document.getElementById(tabId);
+            if(el) el.classList.add('active');
+            
             const footer = document.getElementById('main-footer');
             if (tabId === 'reader') footer.style.display = 'none';
             else footer.style.display = 'block';
 
-            if (tabId !== 'reader' && tabId !== 'admin' && tabId !== 'profile' && tabId !== 'manga-detail') {
-                const clickedLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(tabId));
-                if (clickedLink) clickedLink.classList.add('active');
+            if (!['reader', 'admin', 'profile', 'manga-detail'].includes(tabId)) {
+                const link = Array.from(document.querySelectorAll('.nav-link')).find(l => l.getAttribute('onclick').includes(tabId));
+                if (link) link.classList.add('active');
             } else if (tabId === 'reader' || tabId === 'manga-detail') {
-                // If it's Vimalamani reader context, highlight original Manga tab. Else highlight Community.
-                const highlightTab = currentViewMangaId === 'vimalamani' ? 'manga' : 'community';
-                const hlLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(highlightTab));
-                if (hlLink) hlLink.classList.add('active');
+                const hl = currentViewMangaId === 'vimalamani' ? 'manga' : 'community';
+                const link = Array.from(document.querySelectorAll('.nav-link')).find(l => l.getAttribute('onclick').includes(hl));
+                if (link) link.classList.add('active');
             }
-            
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Trigger specific renders if needed
+            if(tabId === 'community' || tabId === 'studio' || tabId === 'admin') updateUI();
         };
 
-        // Initialize UI and Persistent Login on load
+        window.toggleAuthMode = function() {
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            document.getElementById('auth-title').innerText = authMode === 'login' ? 'LOGIN' : 'SIGN UP';
+            document.getElementById('auth-subtitle').innerText = authMode === 'login' 
+                ? 'Access your account to read chapters and drop comments.' 
+                : 'Create a profile to read chapters, upload your own, and save progress.';
+            document.getElementById('auth-submit-text').innerText = authMode === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
+            document.getElementById('auth-toggle-btn').innerText = authMode === 'login' ? "Don't have an account? Sign Up" : "Already have an account? Login";
+            document.getElementById('auth-error').classList.add('hidden');
+            if (authMode === 'signup') document.getElementById('auth-role-group').classList.remove('hidden');
+            else document.getElementById('auth-role-group').classList.add('hidden');
+        };
+
+        window.toggleAuth = function() {
+            document.getElementById('auth-modal').classList.add('active');
+        };
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.remove('active');
+        };
+        window.showAuthError = function(msg) {
+            const e = document.getElementById('auth-error');
+            e.innerText = msg; e.classList.remove('hidden');
+        };
+        window.togglePasswordVisibility = function(id, btn) {
+            const i = document.getElementById(id);
+            if (i.type === "password") {
+                i.type = "text";
+                btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>`;
+            } else {
+                i.type = "password";
+                btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`;
+            }
+        };
+        window.attemptAdminAccess = function() {
+            if(prompt("Developer access is restricted.\nPlease enter password:") === "admin123") openTab('admin');
+            else alert("Incorrect.");
+        };
+        window.handleAvatarUpload = function(e) {
+            const f = e.target.files[0];
+            if(f) {
+                const r = new FileReader();
+                r.onload = ev => document.getElementById('profile-avatar-preview').src = ev.target.result;
+                r.readAsDataURL(f);
+            }
+        };
+
+        // Bootstrap App
         window.addEventListener('DOMContentLoaded', () => {
-            checkPersistentLogin();
-            updateUI();
+            bootApp();
+            
+            // Check for deep links
+            const params = new URLSearchParams(window.location.search);
+            const pManga = params.get('manga');
+            const pChap = params.get('chapter');
+            if(pManga) {
+                // Wait for data to load
+                const checkData = setInterval(() => {
+                    if(window.appState.mangas.length > 0) {
+                        clearInterval(checkData);
+                        if(pChap) window.attemptRead(pManga, pChap);
+                        else window.viewMangaDetail(pManga);
+                    }
+                }, 500);
+            }
         });
+
     </script>
 </body>
 </html>
